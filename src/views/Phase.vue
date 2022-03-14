@@ -28,11 +28,13 @@
         </el-col>
         <el-col :span="8">
           <el-row type="flex" justify="end">
-            <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
-              <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
-            </div>
-            <div v-for="(ban, index) in characterSelection[1].bansRemaining" :key="index" class="selection ban">
-              <img class="select">
+            <div class="row-reverse">
+              <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
+                <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
+              </div>
+              <div v-for="(ban, index) in characterSelection[1].bansRemaining" :key="index" class="selection ban">
+                <img class="select">
+              </div>
             </div>
           </el-row>
         </el-col>
@@ -48,8 +50,8 @@
           <div v-for="(pick, index) in characterSelection[0].picksRemaining" :key="index" class="selection pick">
             <img class="select">
           </div>
-          <div v-if="characterSelection[0].showButton" class="forSelection" :class="{'deselect': !isTurn, 'pick': selection}" @click="enter">
-            <div v-if="!isTurn" class="disabled"></div>
+          <div v-if="characterSelection[0].showButton" class="forSelection" :class="{'deselect': !characterSelection[0].isTurn, 'pick': selection}" @click="enter">
+            <div v-if="!characterSelection[0].isTurn" class="disabled"></div>
             <img :src="require(`@/assets/images/characters/${characterSelected.image}`)" alt="">
             <div class="text">
               <h3>{{selection ? 'Pick' : 'Ban'}}</h3>
@@ -70,7 +72,7 @@
             <el-button type="danger" @click="vote(0)">No</el-button>
           </el-row>
         </div>
-        <div v-if="showPanel" class="panel-container">
+        <div class="panel-container" :class="{'show': showPanel}">
           <el-scrollbar wrap-class="scrollbar-wrapper">
             <div class="character-panels">
               <div v-for="(row, index) in panels" :key="index" class="panel-col">
@@ -89,8 +91,8 @@
           <div v-for="(pick, index) in characterSelection[1].picksRemaining" :key="index" class="selection pick">
             <img class="select">
           </div>
-          <div v-if="characterSelection[1].showButton" class="forSelection" :class="{'deselect': !isTurn, 'pick': selection}" @click="enter">
-            <div v-if="!isTurn" class="disabled"></div>
+          <div v-if="characterSelection[1].showButton" class="forSelection" :class="{'deselect': !characterSelection[1].isTurn, 'pick': selection}" @click="enter">
+            <div v-if="!characterSelection[1].isTurn" class="disabled"></div>
             <img :src="require(`@/assets/images/characters/${characterSelected.image}`)" alt="">
             <div class="text">
               <h3>{{selection ? 'Pick' : 'Ban'}}</h3>
@@ -110,6 +112,7 @@ export default {
     return {
       characters: Characters,
       default: null,
+      noBan: null,
       players: [],
       panels: [],
       showPanel: false,
@@ -124,7 +127,6 @@ export default {
       reroll: false,
       selection: null,
       currentSelecting: null,
-      isTurn: false,
       characterSelected: null,
       time: 0
     }
@@ -163,6 +165,7 @@ export default {
       }
     )
     this.default = this.characters.filter(character => character.vision === 'Unknown')[0]
+    this.noBan = this.characters.filter(character => character.vision === 'x')[0]
   },
   methods: {
     reveal () {
@@ -198,10 +201,10 @@ export default {
       this.characterSelection = this.characterSelection.map(info => {
         if (info.id === this.userId) {
           info.showButton = false
+          info.isTurn = false
         }
         return info
       })
-      this.isTurn = false
       this.$socket.client.emit('enter', { character: this.characterSelected, selection: this.selection, room: this.$route.params.id, playerId: this.userId })
     },
     addCharacterToSelectionPanel (data) {
@@ -250,6 +253,7 @@ export default {
           picksRemaining: this.panelCount,
           selectText: '',
           showSelectText: false,
+          isTurn: false,
           selection: {
             picks: [],
             bans: []
@@ -291,21 +295,38 @@ export default {
       this.showPanel = true
     },
     select (type) {
-      this.isTurn = true
+      this.characterSelection = this.characterSelection.map(info => {
+        if (this.userId === info.id) {
+          info.isTurn = true
+        }
+        return info
+      })
       this.selection = type
     },
     removeCharacterFromPanel (data) {
       this.addCharacterToSelectionPanel(data)
       this.removeCharacterFromPanel(data)
+      this.characterSelection = this.characterSelection.map(info => {
+        info.isTurn = false
+        if (data.playerId === info.id) {
+          info.showSelectText = true
+        }
+        return info
+      })
     },
     counter (time) {
       this.time = time
     },
     pickDefault (data) {
-      this.isTurn = false
       if (data.selection) {
         this.$socket.client.emit('enter', { character: this.default, selection: data.selection, room: this.$route.params.id, playerId: data.player.id })
+      } else {
+        this.$socket.client.emit('enter', { character: this.noBan, selection: data.selection, room: this.$route.params.id, playerId: data.player.id })
       }
+      this.characterSelection = this.characterSelection.map(info => {
+        info.isTurn = false
+        return info
+      })
     },
     announceSelect (data) {
       this.currentSelecting = data.name
@@ -328,7 +349,6 @@ export default {
       this.$socket.client.emit('nextTurn')
     },
     reset () {
-      this.isTurn = false
       this.selection = null
       this.characterSelected = null
       this.boss = 0
@@ -346,6 +366,7 @@ export default {
           picksRemaining: this.panelCount,
           selectText: null,
           showSelectText: false,
+          isTurn: false,
           selection: {
             picks: [],
             bans: []
@@ -432,10 +453,22 @@ export default {
   .ban-panels {
     padding: 2rem 0;
   }
+  .row-reverse {
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+  }
   .panel-container {
     max-width: 700px;
     width: 100%;
     margin: 2rem auto;
+    transition: .2s;
+    opacity: 0;
+    visibility: hidden;
+    &.show {
+      opacity: 1;
+      visibility: visible;
+    }
   }
   .character-panels {
     max-height: calc(100vh - 400px);
@@ -485,8 +518,8 @@ export default {
       margin: 0 .5rem;
     }
     &.pick {
-      height: 130px;
-      width: 250px;
+      height: 100px;
+      width: 200px;
     }
   }
   .right {

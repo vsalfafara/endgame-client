@@ -1,5 +1,10 @@
 const Characters = [
   {
+    name: 'x',
+    vision: 'x',
+    image: 'x.png'
+  },
+  {
     name: 'Albedo',
     vision: 'Geo',
     image: 'albedo.png'
