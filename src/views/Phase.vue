@@ -63,7 +63,7 @@
       <el-col :span="12">
         <div class="boss" >
           <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
-          <img v-if="boss > 0" :src="require(`@/assets/images/bosses/${boss}.webp`)" alt="">
+          <img v-if="boss > 0" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
         </div>
         <div v-if="rerollButtons">
           <h3>Reroll?</h3>
@@ -170,18 +170,21 @@ export default {
   methods: {
     reveal () {
       this.pressed = true
-      const started = new Date().getTime()
-      const duration = 3000
       const fileCount = require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
-      const randomize = setInterval(() => {
-        const current = new Date().getTime()
-        if (current - started > duration) {
-          clearInterval(randomize)
-          this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
-        } else {
-          this.boss = Math.floor(Math.random() * fileCount) + 1
-        }
-      }, 300)
+      this.boss = Math.floor(Math.random() * fileCount) + 1
+      this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
+      // const started = new Date().getTime()
+      // const duration = 3000
+      // const fileCount = require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
+      // const randomize = setInterval(() => {
+      //   const current = new Date().getTime()
+      //   if (current - started > duration) {
+      //     clearInterval(randomize)
+      //     this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
+      //   } else {
+      //     this.boss = Math.floor(Math.random() * fileCount) + 1
+      //   }
+      // }, 300)
     },
     vote (vote) {
       this.$socket.client.emit('reroll', { id: this.userId, reroll: vote })
@@ -490,10 +493,14 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 150px;
-    img {
+    .boss-img {
+      max-height: 150px;
       height: 100%;
       width: auto;
+      transition: .2s;
+      &.large {
+        max-height: 500px;
+      }
     }
   }
   h3 {
