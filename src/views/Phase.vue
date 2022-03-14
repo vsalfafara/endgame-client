@@ -135,7 +135,6 @@ export default {
     this.panelCount = parseInt(this.$route.query.mode.charAt(0))
     this.$socket.client.emit('getUser')
     this.$socket.client.emit('getAllPlayersInRoom', this.$route.params.id)
-    console.log(this.characterSelection)
   },
   mounted () {
     this.panels.push(
@@ -274,7 +273,6 @@ export default {
         this.rerollButtons = true
       }
       if (this.isHost && !this.reroll) {
-        console.log('asd')
         this.$socket.client.emit('startTimeReroll', this.$route.params.id)
       } else if (this.isHost && this.reroll) {
         this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
