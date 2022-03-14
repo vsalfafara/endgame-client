@@ -1,9 +1,10 @@
 <template>
   <div class="container">
+    <el-button class="reset" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
     <div class="ban-panels">
       <el-row>
-        <el-col :span="10">
-          <el-row type="flex" justify="center">
+        <el-col :span="8">
+          <el-row type="flex" justify="start">
             <div v-for="(ban, index) in characterSelection[0].selection.bans" :key="index" class="selection ban">
               <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
             </div>
@@ -12,13 +13,21 @@
             </div>
           </el-row>
         </el-col>
-        <el-col :span="4">
-          <el-row type="flex" justify="center">
-            <h1 class="time">{{time}}</h1>
+        <el-col :span="8">
+          <el-row type="flex" justify="center" align="middle">
+            <el-col :span="8">
+              <p v-if="characterSelection[0].showSelectText">{{characterSelection[0].selectText}}</p>
+            </el-col>
+            <el-col :span="8">
+              <h1 class="time">{{time}}</h1>
+            </el-col>
+            <el-col :span="8">
+              <p v-if="characterSelection[1].showSelectText">{{characterSelection[1].selectText}}</p>
+            </el-col>
           </el-row>
         </el-col>
-        <el-col :span="10">
-          <el-row type="flex" justify="center">
+        <el-col :span="8">
+          <el-row type="flex" justify="end">
             <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
               <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
             </div>
@@ -61,7 +70,7 @@
             <el-button type="danger" @click="vote(0)">No</el-button>
           </el-row>
         </div>
-        <div class="panel-container">
+        <div v-if="showPanel" class="panel-container">
           <el-scrollbar wrap-class="scrollbar-wrapper">
             <div class="character-panels">
               <div v-for="(row, index) in panels" :key="index" class="panel-col">
@@ -101,17 +110,18 @@ export default {
     return {
       characters: Characters,
       default: null,
-      pressed: 0,
-      boss: 0,
-      rerollButtons: false,
-      reroll: false,
       players: [],
       panels: [],
+      showPanel: false,
       panelCount: 0,
       isHost: this.$route.query.isHost,
       userId: null,
       mode: this.$route.query.mode,
       characterSelection: [],
+      pressed: false,
+      boss: 0,
+      rerollButtons: false,
+      reroll: false,
       selection: null,
       currentSelecting: null,
       isTurn: false,
@@ -123,6 +133,7 @@ export default {
     this.panelCount = parseInt(this.$route.query.mode.charAt(0))
     this.$socket.client.emit('getUser')
     this.$socket.client.emit('getAllPlayersInRoom', this.$route.params.id)
+    console.log(this.characterSelection)
   },
   mounted () {
     this.panels.push(
@@ -155,7 +166,7 @@ export default {
   },
   methods: {
     reveal () {
-      this.pressed = 1
+      this.pressed = true
       const started = new Date().getTime()
       const duration = 3000
       const fileCount = require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
@@ -164,14 +175,9 @@ export default {
         if (current - started > duration) {
           clearInterval(randomize)
           this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
-          if (!this.reroll) {
-            this.$socket.client.emit('startTimerReroll', this.$route.params.id)
-          } else {
-            this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
-            this.$socket.client.emit('nextTurn')
-          }
+        } else {
+          this.boss = Math.floor(Math.random() * fileCount) + 1
         }
-        this.boss = Math.floor(Math.random() * fileCount) + 1
       }, 300)
     },
     vote (vote) {
@@ -197,7 +203,6 @@ export default {
       })
       this.isTurn = false
       this.$socket.client.emit('enter', { character: this.characterSelected, selection: this.selection, room: this.$route.params.id, playerId: this.userId })
-      this.$socket.client.emit('nextTurn')
     },
     addCharacterToSelectionPanel (data) {
       this.characterSelection = this.characterSelection.map(info => {
@@ -211,6 +216,7 @@ export default {
           info.selection.bans.push(data.character.image)
           info.bansRemaining--
         }
+        info.showSelectText = false
         return info
       })
     },
@@ -220,6 +226,15 @@ export default {
           color: panel.color,
           characters: panel.characters.filter(character => character.name !== data.character.name)
         }
+      })
+    },
+    reset () {
+      this.$confirm('This will reset the entire room. Continue?', 'Warning', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.$socket.client.emit('reset', this.$route.params.id)
       })
     }
   },
@@ -233,6 +248,8 @@ export default {
           showButton: false,
           bansRemaining: this.panelCount,
           picksRemaining: this.panelCount,
+          selectText: '',
+          showSelectText: false,
           selection: {
             picks: [],
             bans: []
@@ -248,8 +265,14 @@ export default {
       this.boss = boss
       if (!this.isHost && !this.reroll) {
         this.rerollButtons = true
-      } else {
+      }
+      if (this.isHost && !this.reroll) {
+        console.log('asd')
         this.$socket.client.emit('startTimeReroll', this.$route.params.id)
+      } else if (this.isHost && this.reroll) {
+        this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
+        this.$socket.client.emit('nextTurn')
+        this.$socket.client.emit('showPanel', this.$route.params.id)
       }
     },
     determineReroll (reroll) {
@@ -261,12 +284,15 @@ export default {
       } else {
         this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
         this.$socket.client.emit('nextTurn')
+        this.$socket.client.emit('showPanel', this.$route.params.id)
       }
+    },
+    showPanel () {
+      this.showPanel = true
     },
     select (type) {
       this.isTurn = true
       this.selection = type
-      this.$socket.client.emit('startTimeSelect')
     },
     removeCharacterFromPanel (data) {
       this.addCharacterToSelectionPanel(data)
@@ -280,7 +306,6 @@ export default {
       if (data.selection) {
         this.$socket.client.emit('enter', { character: this.default, selection: data.selection, room: this.$route.params.id, playerId: data.player.id })
       }
-      this.$socket.client.emit('nextTurn')
     },
     announceSelect (data) {
       this.currentSelecting = data.name
@@ -288,8 +313,72 @@ export default {
       this.characterSelected = null
       this.characterSelection = this.characterSelection.map(info => {
         info.showButton = false
+        info.showSelectText = false
+        info.selectText = `${info.name} is ${this.selection ? 'picking' : 'banning'}`
+        if (data.id === info.id) {
+          info.showSelectText = true
+        }
         return info
       })
+    },
+    startTimeSelect () {
+      this.$socket.client.emit('startTimeSelect')
+    },
+    nextTurn () {
+      this.$socket.client.emit('nextTurn')
+    },
+    reset () {
+      this.isTurn = false
+      this.selection = null
+      this.characterSelected = null
+      this.boss = 0
+      this.time = 0
+      this.showPanel = false
+      this.rerollButtons = false
+      this.pressed = false
+      this.reroll = false
+      this.characterSelection = this.players.map(player => {
+        return {
+          id: player.id,
+          name: player.username,
+          showButton: false,
+          bansRemaining: this.panelCount,
+          picksRemaining: this.panelCount,
+          selectText: null,
+          showSelectText: false,
+          selection: {
+            picks: [],
+            bans: []
+          }
+        }
+      })
+      this.panels = []
+      this.panels.push(
+        {
+          color: 'Pyro',
+          characters: this.characters.filter(character => character.vision === 'Pyro')
+        },
+        {
+          color: 'Hydro',
+          characters: this.characters.filter(character => character.vision === 'Hydro')
+        },
+        {
+          color: 'Cryo',
+          characters: this.characters.filter(character => character.vision === 'Cryo')
+        },
+        {
+          color: 'Electro',
+          characters: this.characters.filter(character => character.vision === 'Electro')
+        },
+        {
+          color: 'Anemo',
+          characters: this.characters.filter(character => character.vision === 'Anemo')
+        },
+        {
+          color: 'Geo',
+          characters: this.characters.filter(character => character.vision === 'Geo')
+        }
+      )
     }
   }
 }
@@ -298,6 +387,13 @@ export default {
 <style lang="scss" scoped>
   .container {
     padding: 1rem;
+    position: relative;
+  }
+  .reset {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    z-index: 2;
   }
   h1 {
     text-align: center;
@@ -384,8 +480,8 @@ export default {
       margin: auto;
     }
     &.ban {
-      height: 100px;
-      width: 200px;
+      height: 80px;
+      width: 130px;
       margin: 0 .5rem;
     }
     &.pick {
