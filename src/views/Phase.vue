@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-button class="reset" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
+    <el-button v-if="isHost" class="reset" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
     <div class="ban-panels">
       <el-row>
         <el-col :span="8">
