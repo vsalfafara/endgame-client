@@ -15,10 +15,25 @@
                 <el-radio-button label="4v4">4v4</el-radio-button>
               </el-radio-group>
             </el-form-item>
+            <el-form-item label="Players">
+              <div v-if="captains.length">
+                <div v-for="(player, index) in captains" :key="index" class="player" @click="removeCaptain(player)">
+                  <img :src="player.avatar" alt="">
+                  <p>{{player.username}}</p>
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item prop="firstPick" label="First Pick">
+              <div v-if="captains.length">
+                <el-radio-group v-for="(player, index) in captains" :key="index" v-model="form.firstPick">
+                  <el-radio-button :label="index">{{ player.username }}</el-radio-button>
+                </el-radio-group>
+              </div>
+            </el-form-item>
             <el-form-item class="buttons">
               <div class="btn-group">
                 <el-button @click="getRoomLink">Get Room Link</el-button>
-                <el-button type="primary" @click="start('form')" :disabled="players.length < 2">Start Game</el-button>
+                <el-button type="primary" @click="start('form')">Start Game</el-button>
               </div>
             </el-form-item>
           </el-form>
@@ -29,7 +44,7 @@
           <div slot="header">
             <span>Players</span>
           </div>
-          <div v-for="(player, index) in players" :key="index" class="player">
+          <div v-for="(player, index) in players" :key="index" class="player" @click="selectCaptain(player)">
             <img :src="player.avatar" alt="">
             <p>{{player.username}}</p>
           </div>
@@ -44,13 +59,19 @@ export default {
   data () {
     return {
       players: [],
+      captains: [],
       isHost: false,
       userId: null,
       form: {
-        mode: null
+        room: this.$route.params.id,
+        mode: null,
+        firstPick: null
       },
       rules: {
         mode: [
+          { required: true }
+        ],
+        firstPick: [
           { required: true }
         ]
       }
@@ -68,14 +89,44 @@ export default {
         type: 'success'
       })
     },
+    selectCaptain (player) {
+      const existingCaptain = this.captains.find(captain => captain.id === player.id)
+      if (existingCaptain) {
+        this.$message({
+          message: 'Captain already selected',
+          type: 'error'
+        })
+      } else if (this.captains.length < 2) {
+        this.$confirm(`Select ${player.username} for the game?`, 'Select Player', {
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'Cancel',
+          type: 'info'
+        }).then(() => {
+          this.captains.push(player)
+        })
+      } else {
+        this.$message({
+          message: 'Maximum number of captains reached',
+          type: 'error'
+        })
+      }
+    },
+    removeCaptain (player) {
+      this.$confirm(`Remove ${player.username} for the game?`, 'Remove Player', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Cancel',
+        type: 'info'
+      }).then(() => {
+        this.captains = this.captains.filter(captain => captain.id !== player.id)
+        this.form.firstPick = null
+      })
+    },
     start (form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          const form = {
-            room: this.$route.params.id,
-            mode: this.form.mode
-          }
-          this.$socket.client.emit('startPhase', form)
+          this.form.captains = this.captains
+          this.form.host = this.userId
+          this.$socket.client.emit('startPhase', this.form)
         } else {
           console.log('error submit!!')
           return false
@@ -90,6 +141,9 @@ export default {
     getUser (val) {
       this.isHost = val.isHost
       this.userId = val.id
+      if (this.isHost) {
+        this.$socket.client.emit('reset', { room: this.$route.params.id, type: 1 })
+      }
     },
     startPhase (mode) {
       this.$router.push(`phase/${this.$route.params.id}?userId=${this.userId}&isHost=${this.isHost}&mode=${mode}`)
@@ -130,6 +184,7 @@ export default {
           display: inline-block;
           width: 25%;
           margin: 0;
+          cursor: pointer;
         }
       }
     }

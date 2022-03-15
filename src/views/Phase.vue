@@ -1,42 +1,49 @@
 <template>
-  <div class="container">
-    <el-button v-if="isHost" class="reset" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
+  <div v-if="characterSelection" class="container">
+    <div class="controls">
+      <el-button v-if="isHost" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
+      <el-button v-if="isHost && showSwitchBtn" type="primary" icon="el-icon-refresh" circle @click="switchCaptains"></el-button>
+    </div>
     <div class="ban-panels">
       <el-row>
         <el-col :span="8">
-          <el-row type="flex" justify="start">
+          <div class="row">
             <div v-for="(ban, index) in characterSelection[0].selection.bans" :key="index" class="selection ban">
               <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
             </div>
             <div v-for="(ban, index) in characterSelection[0].bansRemaining" :key="index" class="selection ban">
               <img class="select">
             </div>
-          </el-row>
+          </div>
         </el-col>
         <el-col :span="8">
           <el-row type="flex" justify="center" align="middle">
             <el-col :span="8">
-              <p v-if="characterSelection[0].showSelectText">{{characterSelection[0].selectText}}</p>
+              <div class="text-align-center">
+                <p v-if="characterSelection[0].showSelectText">{{characterSelection[0].selectText}}</p>
+                <p v-if="showRerollText">{{characterSelection[0].rerollText}}</p>
+              </div>
             </el-col>
             <el-col :span="8">
               <h1 class="time">{{time}}</h1>
             </el-col>
             <el-col :span="8">
-              <p v-if="characterSelection[1].showSelectText">{{characterSelection[1].selectText}}</p>
+              <div class="text-align-center">
+                <p v-if="characterSelection[1].showSelectText">{{characterSelection[1].selectText}}</p>
+                <p v-if="showRerollText">{{characterSelection[1].rerollText}}</p>
+              </div>
             </el-col>
           </el-row>
         </el-col>
         <el-col :span="8">
-          <el-row type="flex" justify="end">
-            <div class="row-reverse">
-              <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
-                <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
-              </div>
-              <div v-for="(ban, index) in characterSelection[1].bansRemaining" :key="index" class="selection ban">
-                <img class="select">
-              </div>
+          <div class="row-reverse">
+            <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
+              <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
             </div>
-          </el-row>
+            <div v-for="(ban, index) in characterSelection[1].bansRemaining" :key="index" class="selection ban">
+              <img class="select">
+            </div>
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -63,7 +70,8 @@
       <el-col :span="12">
         <div class="boss" >
           <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
-          <img v-if="boss > 0" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
+          <img v-if="showBoss" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
+          <img v-if="showRoulette" src="@/assets/images/bosses/roulette.gif" class="boss-img large" alt="">
         </div>
         <div v-if="rerollButtons">
           <h3>Reroll?</h3>
@@ -116,8 +124,12 @@ export default {
       players: [],
       panels: [],
       showPanel: false,
+      showRoulette: false,
+      showBoss: false,
+      showRerollText: false,
       panelCount: 0,
       isHost: this.$route.query.isHost,
+      showSwitchBtn: true,
       userId: null,
       mode: this.$route.query.mode,
       characterSelection: [],
@@ -134,7 +146,7 @@ export default {
   created () {
     this.panelCount = parseInt(this.$route.query.mode.charAt(0))
     this.$socket.client.emit('getUser')
-    this.$socket.client.emit('getAllPlayersInRoom', this.$route.params.id)
+    this.$socket.client.emit('getAllCaptainsInRoom', this.$route.params.id)
   },
   mounted () {
     this.panels.push(
@@ -171,24 +183,16 @@ export default {
       this.pressed = true
       const fileCount = require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
       this.boss = Math.floor(Math.random() * fileCount) + 1
-      this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
-      // const started = new Date().getTime()
-      // const duration = 3000
-      // const fileCount = require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
-      // const randomize = setInterval(() => {
-      //   const current = new Date().getTime()
-      //   if (current - started > duration) {
-      //     clearInterval(randomize)
-      //     this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
-      //   } else {
-      //     this.boss = Math.floor(Math.random() * fileCount) + 1
-      //   }
-      // }, 300)
+      this.showRoulette = true
+      setTimeout(() => {
+        this.showRoulette = false
+        this.showBoss = true
+        this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
+      }, 3000)
     },
     vote (vote) {
       this.$socket.client.emit('reroll', { id: this.userId, reroll: vote })
       this.rerollButtons = false
-      this.reroll = true
     },
     select (character) {
       this.characterSelected = character
@@ -233,18 +237,27 @@ export default {
         }
       })
     },
+    switchCaptains () {
+      this.$confirm('This will switch the selection sequence.. Continue?', 'Warning', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.$socket.client.emit('switchCaptain', this.$route.params.id)
+      })
+    },
     reset () {
       this.$confirm('This will reset the entire room. Continue?', 'Warning', {
         confirmButtonText: 'Yes',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        this.$socket.client.emit('reset', this.$route.params.id)
+        this.$socket.client.emit('reset', { room: this.$route.params.id, type: 0 })
       })
     }
   },
   sockets: {
-    getAllPlayersInRoom (val) {
+    getAllCaptainsInRoom (val) {
       this.players = val
       this.characterSelection = this.players.map(player => {
         return {
@@ -256,6 +269,7 @@ export default {
           selectText: '',
           showSelectText: false,
           isTurn: false,
+          rerollText: false,
           selection: {
             picks: [],
             bans: []
@@ -267,29 +281,51 @@ export default {
       this.isHost = val.isHost
       this.userId = val.id
     },
-    showBoss (boss) {
-      this.boss = boss
-      if (!this.isHost && !this.reroll) {
+    returnToRoom () {
+      this.$router.push(`/room/${this.$route.params.id}`)
+    },
+    showBoss (data) {
+      this.boss = data.boss
+      this.showBoss = true
+      if (!this.isHost && !data.rerollStatus) {
         this.rerollButtons = true
       }
-      if (this.isHost && !this.reroll) {
+      if (this.isHost && !data.rerollStatus) {
         this.$socket.client.emit('startTimeReroll', this.$route.params.id)
-      } else if (this.isHost && this.reroll) {
-        this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
-        this.$socket.client.emit('nextTurn')
-        this.$socket.client.emit('showPanel', this.$route.params.id)
+      } else if (this.isHost && data.rerollStatus) {
+        this.$socket.client.emit('countdownToSelect', this.$route.params.id)
       }
     },
-    determineReroll (reroll) {
-      const vote = reroll.reduce((votes, info) => votes + info.voteReroll, 0)
-      if (vote === 2) {
+    startSelect () {
+      this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
+      this.$socket.client.emit('nextTurn', this.$route.params.id)
+      this.$socket.client.emit('showPanel', this.$route.params.id)
+    },
+    determineReroll (data) {
+      const vote = data.reroll.reduce((votes, info) => votes + info.voteReroll, 0)
+      if (vote > 1 && !data.rerollStatus) {
         this.pressed = 0
+        this.showBoss = false
+        this.showRoulette = false
         this.boss = 0
-        this.reroll = true
+        this.$socket.client.emit('rerolled')
       } else {
-        this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
-        this.$socket.client.emit('nextTurn')
-        this.$socket.client.emit('showPanel', this.$route.params.id)
+        this.$socket.client.emit('countdownToSelect', this.$route.params.id)
+      }
+    },
+    showReroll (data) {
+      this.showRerollText = true
+      console.log(data.rerollStatus)
+      if (!data.rerollStatus) {
+        this.rerollButtons = false
+        this.characterSelection = this.characterSelection.map(info => {
+          data.captains.forEach(player => {
+            if (info.id === player.id) {
+              info.rerollText = player.voteReroll ? 'Reroll' : 'No Reroll'
+            }
+          })
+          return info
+        })
       }
     },
     showPanel () {
@@ -333,6 +369,7 @@ export default {
       this.currentSelecting = data.name
       this.selection = data.type
       this.characterSelected = null
+      this.showRerollText = false
       this.characterSelection = this.characterSelection.map(info => {
         info.showButton = false
         info.showSelectText = false
@@ -347,7 +384,10 @@ export default {
       this.$socket.client.emit('startTimeSelect')
     },
     nextTurn () {
-      this.$socket.client.emit('nextTurn')
+      this.$socket.client.emit('nextTurn', this.$route.params.id)
+    },
+    showSwitchBtn () {
+      this.switchBtn = true
     },
     reset () {
       this.selection = null
@@ -355,26 +395,13 @@ export default {
       this.boss = 0
       this.time = 0
       this.showPanel = false
+      this.showBoss = false
+      this.showRoulette = false
+      this.showRerollText = false
       this.rerollButtons = false
       this.pressed = false
-      this.reroll = false
-      this.characterSelection = this.players.map(player => {
-        return {
-          id: player.id,
-          name: player.username,
-          showButton: false,
-          bansRemaining: this.panelCount,
-          picksRemaining: this.panelCount,
-          selectText: null,
-          showSelectText: false,
-          isTurn: false,
-          selection: {
-            picks: [],
-            bans: []
-          }
-        }
-      })
       this.panels = []
+      this.$socket.client.emit('getAllCaptainsInRoom', this.$route.params.id)
       this.panels.push(
         {
           color: 'Pyro',
@@ -411,11 +438,15 @@ export default {
     padding: 1rem;
     position: relative;
   }
-  .reset {
+  .controls {
     position: absolute;
     top: .5rem;
     right: .5rem;
     z-index: 2;
+    display: flex;
+    .el-button {
+      margin: 0 .5rem;
+    }
   }
   h1 {
     text-align: center;
@@ -424,6 +455,9 @@ export default {
       font-size: 5rem;
       margin: 0;
     }
+  }
+  .text-align-center {
+    text-align: center;
   }
   .panel {
     height: 100px;
@@ -452,7 +486,11 @@ export default {
     }
   }
   .ban-panels {
-    padding: 2rem 0;
+    margin: 3rem 0;
+  }
+  .row {
+    display: flex;
+    justify-content: center;
   }
   .row-reverse {
     display: flex;
