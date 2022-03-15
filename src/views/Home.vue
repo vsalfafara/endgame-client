@@ -115,7 +115,7 @@ export default {
   methods: {
     createAvatar () {
       if (this.form.name && this.form.avatar) {
-        this.avatar = `https://avatars.dicebear.com/api/${this.form.avatar}/:${this.form.username}.svg`
+        this.avatar = `https://avatars.dicebear.com/api/${this.form.avatar}/:${this.form.name}.svg`
       }
     },
     createRoom (form) {
