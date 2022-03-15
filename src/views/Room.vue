@@ -90,25 +90,27 @@ export default {
       })
     },
     selectCaptain (player) {
-      const existingCaptain = this.captains.find(captain => captain.id === player.id)
-      if (existingCaptain) {
-        this.$message({
-          message: 'Captain already selected',
-          type: 'error'
-        })
-      } else if (this.captains.length < 2) {
-        this.$confirm(`Select ${player.username} for the game?`, 'Select Player', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'info'
-        }).then(() => {
-          this.captains.push(player)
-        })
-      } else {
-        this.$message({
-          message: 'Maximum number of captains reached',
-          type: 'error'
-        })
+      if (this.isHost) {
+        const existingCaptain = this.captains.find(captain => captain.id === player.id)
+        if (existingCaptain) {
+          this.$message({
+            message: 'Captain already selected',
+            type: 'error'
+          })
+        } else if (this.captains.length < 2) {
+          this.$confirm(`Select ${player.username} for the game?`, 'Select Player', {
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel',
+            type: 'info'
+          }).then(() => {
+            this.captains.push(player)
+          })
+        } else {
+          this.$message({
+            message: 'Maximum number of captains reached',
+            type: 'error'
+          })
+        }
       }
     },
     removeCaptain (player) {

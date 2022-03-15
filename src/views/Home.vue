@@ -2,12 +2,26 @@
   <div class="center">
     <el-card>
       <h3>Paimon Sandwich Endgame Banning and Picking System</h3>
-      <el-form ref="form" :model="form" :rules="rules">
+      <el-form v-if="!$route.params.id" ref="gmForm" :model="form" :rules="rules">
         <el-form-item>
           <img v-if="avatar" :src="avatar">
         </el-form-item>
-        <el-form-item prop="username">
-          <el-input v-model="form.username" placeholder="Username" @change="createAvatar"></el-input>
+        <el-form-item prop="name">
+          <el-input v-model="form.name" placeholder="GM Name"></el-input>
+        </el-form-item>
+        <el-form-item prop="key">
+          <el-input v-model="gmForm.key" placeholder="Secret Key"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="createRoom('gmForm')">Create Private Room</el-button>
+        </el-form-item>
+      </el-form>
+      <el-form v-else ref="form" :model="form" :rules="rules">
+        <el-form-item>
+          <img v-if="avatar" :src="avatar">
+        </el-form-item>
+        <el-form-item prop="name">
+          <el-input v-model="form.name" placeholder="Player Name/Team Name" @change="createAvatar"></el-input>
         </el-form-item>
         <el-form-item prop="avatar">
           <el-select v-model="form.avatar" placeholder="Select Avatar" @change="createAvatar">
@@ -21,8 +35,7 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="!$route.params.id" type="primary" @click="createRoom('form')">Create Private Room</el-button>
-          <el-button v-else type="primary" @click="joinRoom('form')">Join Room</el-button>
+          <el-button type="primary" @click="joinRoom('form')">Join Room</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -77,11 +90,20 @@ export default {
       ],
       avatar: null,
       form: {
-        username: null,
+        name: null,
         avatar: null
       },
+      gmForm: {
+        name: null,
+        key: null
+      },
+      gmRules: {
+        key: [
+          { required: true }
+        ]
+      },
       rules: {
-        username: [
+        name: [
           { required: true }
         ],
         avatar: [
@@ -92,19 +114,14 @@ export default {
   },
   methods: {
     createAvatar () {
-      if (this.form.username && this.form.avatar) {
+      if (this.form.name && this.form.avatar) {
         this.avatar = `https://avatars.dicebear.com/api/${this.form.avatar}/:${this.form.username}.svg`
       }
     },
     createRoom (form) {
       this.$refs[form].validate((valid) => {
         if (valid) {
-          const form = {
-            username: this.form.username,
-            avatar: this.avatar,
-            team: null
-          }
-          this.$socket.client.emit('createRoom', form)
+          this.$socket.client.emit('createRoom', this.gmForm)
         } else {
           console.log('error submit!!')
           return false
@@ -115,9 +132,8 @@ export default {
       this.$refs[form].validate((valid) => {
         if (valid) {
           const form = {
-            username: this.form.username,
-            avatar: this.avatar,
-            team: this.form.team
+            name: this.form.name,
+            avatar: this.avatar
           }
           this.$socket.client.emit('joinRoom', form, this.$route.params.id)
         } else {
@@ -133,6 +149,12 @@ export default {
     },
     getRoomId (val) {
       this.$router.push(`/room/${val}`)
+    },
+    incorrectKey () {
+      this.$message({
+        message: 'Invalid Key',
+        type: 'error'
+      })
     }
   }
 }
