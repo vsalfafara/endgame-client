@@ -10,7 +10,7 @@
 export default {
   data () {
     return {
-      image: require('@/assets/images/bg-home.jpg')
+      image: require('@/assets/images/bg.png')
     }
   },
   computed: {
