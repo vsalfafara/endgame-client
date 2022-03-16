@@ -14,10 +14,12 @@
     width: 100%;
     object-fit: cover;
     object-position: center;
-    z-index: -1;
+    z-index: 2;
   }
   .dark {
+    position: relative;
     background-color: rgba(0, 0, 0, .6);
     height: 100vh;
+    z-index: 3;
   }
 </style>
