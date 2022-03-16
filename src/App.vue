@@ -1,37 +1,23 @@
 <template>
-  <div :style="bg">
-    <div :style="transparent">
+  <div>
+    <img class="bg" src="@/assets/images/bg.png" alt="">
+    <div class="dark">
       <router-view/>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-      image: require('./assets/images/bg.png')
-    }
-  },
-  created () {
-    console.log(this.image)
-  },
-  computed: {
-    bg () {
-      return {
-        'background-image': `url(${this.image})`,
-        'background-repeat': 'no-repeat',
-        'background-size': 'cover',
-        'background-position': 'center center',
-        height: '100vh'
-      }
-    },
-    transparent () {
-      return {
-        'background-color': 'rgba(0, 0, 0, .7)',
-        height: '100vh'
-      }
-    }
+<style lang="scss" scoped>
+  .bg {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+    z-index: -1;
   }
-}
-</script>
+  .dark {
+    background-color: rgba(0, 0, 0, .6);
+    height: 100vh;
+  }
+</style>
