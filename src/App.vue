@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img class="bg" src="@/assets/images/bg.png" alt="">
+    <img class="bg" src="@/assets/images/Bg.png" alt="">
     <div class="dark">
       <router-view/>
     </div>
