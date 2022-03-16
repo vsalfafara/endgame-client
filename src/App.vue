@@ -7,11 +7,10 @@
 </template>
 
 <script>
-import image from '@/assets/images/bg.png'
 export default {
   data () {
     return {
-      image: image
+      image: require('@/assets/images/bg.png')
     }
   },
   created () {
