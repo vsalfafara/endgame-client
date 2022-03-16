@@ -80,12 +80,12 @@ export default {
           value: 'jdenticon'
         },
         {
-          label: 'Gridy ',
-          value: 'gridy '
+          label: 'Gridy',
+          value: 'gridy'
         },
         {
-          label: 'Micah ',
-          value: 'micah '
+          label: 'Micah',
+          value: 'micah'
         }
       ],
       avatar: null,
