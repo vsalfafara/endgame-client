@@ -7,12 +7,15 @@
 </template>
 
 <script>
-import image from './assets/images/bg.png'
+import image from '@/assets/images/bg.png'
 export default {
   data () {
     return {
       image: image
     }
+  },
+  created () {
+    console.log(this.image)
   },
   computed: {
     bg () {

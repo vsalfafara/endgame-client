@@ -315,7 +315,6 @@ export default {
     },
     showReroll (data) {
       this.showRerollText = true
-      console.log(data.rerollStatus)
       if (!data.rerollStatus) {
         this.rerollButtons = false
         this.characterSelection = this.characterSelection.map(info => {
