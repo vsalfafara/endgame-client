@@ -371,14 +371,14 @@ export default {
           return info
         })
       } else {
+        this.flashType = data.selection
+        this.flash = require(`@/assets/images/flash/${data.character.flash}`)
+        this.showFlash = true
         if (data.selection) {
           new Audio(require(`@/assets/voice/${data.character.picked}`)).play()
         } else {
           new Audio(require(`@/assets/voice/${data.character.banned}`)).play()
         }
-        this.flashType = data.selection
-        this.flash = require(`@/assets/images/flash/${data.character.flash}`)
-        this.showFlash = true
       }
     },
     counter (time) {
