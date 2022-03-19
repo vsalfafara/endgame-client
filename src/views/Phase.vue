@@ -385,11 +385,7 @@ export default {
       this.time = time
     },
     pickDefault (data) {
-      if (data.selection) {
-        this.$socket.client.emit('enter', { character: this.default, selection: data.selection, room: this.$route.params.id, playerId: data.player.id })
-      } else {
-        this.$socket.client.emit('enter', { character: this.noBan, selection: data.selection, room: this.$route.params.id, playerId: data.player.id })
-      }
+      this.$socket.client.emit('enter', { character: this.noBan, selection: data.selection, room: this.$route.params.id, playerId: data.player.id })
       this.characterSelection = this.characterSelection.map(info => {
         info.isTurn = false
         return info
@@ -434,6 +430,8 @@ export default {
       this.showRoulette = false
       this.showRerollText = false
       this.rerollButtons = false
+      this.flash = null
+      this.showFlash = false
       this.pressed = false
       this.panels = []
       this.$socket.client.emit('getAllCaptainsInRoom', this.$route.params.id)

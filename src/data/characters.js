@@ -10,7 +10,7 @@ const Characters = [
     image: 'albedo.png',
     picked: 'albedo_p.wav',
     banned: 'albedo_b.wav',
-    flash: 'Albedo.png'
+    flash: 'Albedo.webp'
   },
   {
     name: 'Aloy',
@@ -18,7 +18,7 @@ const Characters = [
     image: 'aloy.png',
     picked: 'aloy_p.wav',
     banned: 'aloy_b.wav',
-    flash: 'Aloy.png'
+    flash: 'Aloy.webp'
   },
   {
     name: 'Amber',
@@ -26,7 +26,7 @@ const Characters = [
     image: 'amber.png',
     picked: 'amber_p.wav',
     banned: 'amber_b.wav',
-    flash: 'Amber.png'
+    flash: 'Amber.webp'
   },
   {
     name: 'Arataki Itto',
@@ -34,7 +34,7 @@ const Characters = [
     image: 'arataki-itto.png',
     picked: 'itto_p.wav',
     banned: 'itto_b.wav',
-    flash: 'Itto.png'
+    flash: 'Itto.webp'
   },
   {
     name: 'Barbara',
@@ -42,7 +42,7 @@ const Characters = [
     image: 'barbara.png',
     picked: 'barbara_p.wav',
     banned: 'barbara_b.wav',
-    flash: 'Barbara.png'
+    flash: 'Barbara.webp'
   },
   {
     name: 'Beidou',
@@ -50,7 +50,7 @@ const Characters = [
     image: 'beidou.png',
     picked: 'beidou_p.wav',
     banned: 'beidou_b.wav',
-    flash: 'Beidou.png'
+    flash: 'Beidou.webp'
   },
   {
     name: 'Bennett',
@@ -58,7 +58,7 @@ const Characters = [
     image: 'bennett.png',
     picked: 'bennett_p.wav',
     banned: 'bennett_b.wav',
-    flash: 'Bennett.png'
+    flash: 'Bennett.webp'
   },
   {
     name: 'Chongyun',
@@ -66,7 +66,7 @@ const Characters = [
     image: 'chongyun.png',
     picked: 'chongyun_p.wav',
     banned: 'chongyun_b.wav',
-    flash: 'Chongyun.png'
+    flash: 'Chongyun.webp'
   },
   {
     name: 'Diluc',
@@ -74,7 +74,7 @@ const Characters = [
     image: 'diluc.png',
     picked: 'diluc_p.wav',
     banned: 'diluc_b.wav',
-    flash: 'Diluc.png'
+    flash: 'Diluc.webp'
   },
   {
     name: 'Diona',
@@ -82,7 +82,7 @@ const Characters = [
     image: 'diona.png',
     picked: 'diona_p.wav',
     banned: 'diona_b.wav',
-    flash: 'Diona.png'
+    flash: 'Diona.webp'
   },
   {
     name: 'Eula',
@@ -90,7 +90,7 @@ const Characters = [
     image: 'eula.png',
     picked: 'eula_p.wav',
     banned: 'eula_b.wav',
-    flash: 'Eula.png'
+    flash: 'Eula.webp'
   },
   {
     name: 'Fischl',
@@ -98,7 +98,7 @@ const Characters = [
     image: 'fischl.png',
     picked: 'fischl_p.wav',
     banned: 'fischl_b.wav',
-    flash: 'Fischl.png'
+    flash: 'Fischl.webp'
   },
   {
     name: 'Ganyu',
@@ -106,7 +106,7 @@ const Characters = [
     image: 'ganyu.png',
     picked: 'ganyu_p.wav',
     banned: 'ganyu_b.wav',
-    flash: 'Ganyu.png'
+    flash: 'Ganyu.webp'
   },
   {
     name: 'Gorou',
@@ -114,7 +114,7 @@ const Characters = [
     image: 'gorou.png',
     picked: 'gorou_p.wav',
     banned: 'gorou_b.wav',
-    flash: 'Gorou.png'
+    flash: 'Gorou.webp'
   },
   {
     name: 'Hu Tao',
@@ -122,7 +122,7 @@ const Characters = [
     image: 'hu-tao.png',
     picked: 'hutao_p.wav',
     banned: 'hutao_b.wav',
-    flash: 'Hu Tao.png'
+    flash: 'Hu Tao.webp'
   },
   {
     name: 'Jean',
@@ -130,7 +130,7 @@ const Characters = [
     image: 'jean.png',
     picked: 'jean_p.wav',
     banned: 'jean_b.wav',
-    flash: 'Jean.png'
+    flash: 'Jean.webp'
   },
   {
     name: 'Kaedahara Kazuha',
@@ -138,7 +138,7 @@ const Characters = [
     image: 'kaedahara-kazuha.png',
     picked: 'kazuha_p.wav',
     banned: 'kazuha_b.wav',
-    flash: 'Kazuha.png'
+    flash: 'Kazuha.webp'
   },
   {
     name: 'Kaeya',
@@ -146,7 +146,7 @@ const Characters = [
     image: 'kaeya.png',
     picked: 'kaeya_p.wav',
     banned: 'kaeya_b.wav',
-    flash: 'Kaeya.png'
+    flash: 'Kaeya.webp'
   },
   {
     name: 'Kamisato Ayaka',
@@ -154,7 +154,7 @@ const Characters = [
     image: 'kamisato-ayaka.png',
     picked: 'ayaka_p.wav',
     banned: 'ayaka_b.wav',
-    flash: 'Ayaka.png'
+    flash: 'Ayaka.webp'
   },
   {
     name: 'Keqing',
@@ -162,7 +162,7 @@ const Characters = [
     image: 'keqing.png',
     picked: 'keqing_p.wav',
     banned: 'keqing_b.wav',
-    flash: 'Keqing.png'
+    flash: 'Keqing.webp'
   },
   {
     name: 'Klee',
@@ -170,7 +170,7 @@ const Characters = [
     image: 'klee.png',
     picked: 'klee_p.wav',
     banned: 'klee_b.wav',
-    flash: 'Klee.png'
+    flash: 'Klee.webp'
   },
   {
     name: 'Kujou Sara',
@@ -178,7 +178,7 @@ const Characters = [
     image: 'kujou-sara.png',
     picked: 'sara_p.wav',
     banned: 'sara_b.wav',
-    flash: 'Sara.png'
+    flash: 'Sara.webp'
   },
   {
     name: 'Lisa',
@@ -186,7 +186,7 @@ const Characters = [
     image: 'lisa.png',
     picked: 'lisa_p.wav',
     banned: 'lisa_b.wav',
-    flash: 'Lisa.png'
+    flash: 'Lisa.webp'
   },
   {
     name: 'Mona',
@@ -194,7 +194,7 @@ const Characters = [
     image: 'mona.png',
     picked: 'mona_p.wav',
     banned: 'mona_b.wav',
-    flash: 'Mona.png'
+    flash: 'Mona.webp'
   },
   {
     name: 'Ningguang',
@@ -202,7 +202,7 @@ const Characters = [
     image: 'ningguang.png',
     picked: 'ningguang_p.wav',
     banned: 'ningguang_b.wav',
-    flash: 'Ningguang.png'
+    flash: 'Ningguang.webp'
   },
   {
     name: 'Noelle',
@@ -210,7 +210,7 @@ const Characters = [
     image: 'noelle.png',
     picked: 'noelle_p.wav',
     banned: 'noelle_b.wav',
-    flash: 'Noelle.png'
+    flash: 'Noelle.webp'
   },
   {
     name: 'Qiqi',
@@ -218,7 +218,7 @@ const Characters = [
     image: 'qiqi.png',
     picked: 'qiqi_p.wav',
     banned: 'qiqi_b.wav',
-    flash: 'Qiqi.png'
+    flash: 'Qiqi.webp'
   },
   {
     name: 'Raiden Shogun',
@@ -226,7 +226,7 @@ const Characters = [
     image: 'raiden-shogun.png',
     picked: 'raiden_p.wav',
     banned: 'raiden_b.wav',
-    flash: 'Raiden.png'
+    flash: 'Raiden.webp'
   },
   {
     name: 'Razor',
@@ -234,7 +234,7 @@ const Characters = [
     image: 'razor.png',
     picked: 'razor_p.wav',
     banned: 'razor_b.wav',
-    flash: 'Razor.png'
+    flash: 'Razor.webp'
   },
   {
     name: 'Rosaria',
@@ -242,7 +242,7 @@ const Characters = [
     image: 'rosaria.png',
     picked: 'rosaria_p.wav',
     banned: 'rosaria_b.wav',
-    flash: 'Rosaria.png'
+    flash: 'Rosaria.webp'
   },
   {
     name: 'Sangonomiya Kokomi',
@@ -250,7 +250,7 @@ const Characters = [
     image: 'sangonomiya-kokomi.png',
     picked: 'kokomi_p.wav',
     banned: 'kokomi_b.wav',
-    flash: 'Kokomi.png'
+    flash: 'Kokomi.webp'
   },
   {
     name: 'Sayu',
@@ -258,7 +258,7 @@ const Characters = [
     image: 'sayu.png',
     picked: 'sayu_p.wav',
     banned: 'sayu_b.wav',
-    flash: 'Sayu.png'
+    flash: 'Sayu.webp'
   },
   {
     name: 'Shenhe',
@@ -266,7 +266,7 @@ const Characters = [
     image: 'shenhe.png',
     picked: 'shenhe_p.wav',
     banned: 'shenhe_b.wav',
-    flash: 'Shenhe.png'
+    flash: 'Shenhe.webp'
   },
   {
     name: 'Sucrose',
@@ -274,7 +274,7 @@ const Characters = [
     image: 'sucrose.png',
     picked: 'sucrose_p.wav',
     banned: 'sucrose_b.wav',
-    flash: 'Sucrose.png'
+    flash: 'Sucrose.webp'
   },
   {
     name: 'Tartaglia',
@@ -282,7 +282,7 @@ const Characters = [
     image: 'tartaglia.png',
     picked: 'childe_p.wav',
     banned: 'childe_b.wav',
-    flash: 'Childe.png'
+    flash: 'Childe.webp'
   },
   {
     name: 'Thoma',
@@ -290,7 +290,7 @@ const Characters = [
     image: 'thoma.png',
     picked: 'thoma_p.wav',
     banned: 'thoma_b.wav',
-    flash: 'Thoma.png'
+    flash: 'Thoma.webp'
   },
   {
     name: 'Traveler',
@@ -303,7 +303,7 @@ const Characters = [
     image: 'venti.png',
     picked: 'venti_p.wav',
     banned: 'venti_b.wav',
-    flash: 'Venti.png'
+    flash: 'Venti.webp'
   },
   {
     name: 'Xiangling',
@@ -311,7 +311,7 @@ const Characters = [
     image: 'xiangling.png',
     picked: 'xiangling_p.wav',
     banned: 'xiangling_b.wav',
-    flash: 'Xiangling.png'
+    flash: 'Xiangling.webp'
   },
   {
     name: 'Xiao',
@@ -319,7 +319,7 @@ const Characters = [
     image: 'xiao.png',
     picked: 'xiao_p.wav',
     banned: 'xiao_b.wav',
-    flash: 'Xiao.png'
+    flash: 'Xiao.webp'
   },
   {
     name: 'Xingqiu',
@@ -327,7 +327,7 @@ const Characters = [
     image: 'xingqiu.png',
     picked: 'xingqiu_p.wav',
     banned: 'xingqiu_b.wav',
-    flash: 'Xingqiu.png'
+    flash: 'Xingqiu.webp'
   },
   {
     name: 'Xinyan',
@@ -335,7 +335,7 @@ const Characters = [
     image: 'xinyan.png',
     picked: 'xinyan_p.wav',
     banned: 'xinyan_b.wav',
-    flash: 'Xinyan.png'
+    flash: 'Xinyan.webp'
   },
   {
     name: 'Yae Miko',
@@ -343,7 +343,7 @@ const Characters = [
     image: 'yae-miko.png',
     picked: 'yae_p.wav',
     banned: 'yae_b.wav',
-    flash: 'Yaemiko.png'
+    flash: 'Yaemiko.webp'
   },
   {
     name: 'Yanfei',
@@ -351,7 +351,7 @@ const Characters = [
     image: 'yanfei.png',
     picked: 'yanfei_p.wav',
     banned: 'yanfei_b.wav',
-    flash: 'Yanfei.png'
+    flash: 'Yanfei.webp'
   },
   {
     name: 'Yoimiya',
@@ -359,7 +359,7 @@ const Characters = [
     image: 'yoimiya.png',
     picked: 'yoimiya_p.wav',
     banned: 'yoimiya_b.wav',
-    flash: 'Yoimiya.png'
+    flash: 'Yoimiya.webp'
   },
   {
     name: 'Yunjin',
@@ -367,7 +367,7 @@ const Characters = [
     image: 'yunjin.png',
     picked: 'yunjin_p.wav',
     banned: 'yunjin_b.wav',
-    flash: 'Yun jin.png'
+    flash: 'Yun jin.webp'
   },
   {
     name: 'Zhongli',
@@ -375,7 +375,7 @@ const Characters = [
     image: 'zhongli.png',
     picked: 'zhongli_p.wav',
     banned: 'zhongli_b.wav',
-    flash: 'Zhongli.png'
+    flash: 'Zhongli.webp'
   }
 ]
 
