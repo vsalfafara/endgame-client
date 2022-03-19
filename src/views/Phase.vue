@@ -1,5 +1,8 @@
 <template>
   <div v-if="characterSelection" class="container">
+    <div v-if="characterSelection[0].showSelectType" class="player one" :class="{'picking': characterSelection[0].selectType === 1, 'banning': characterSelection[0].selectType === 0}"></div>
+    <div v-if="characterSelection[1].showSelectType" class="player two" :class="{'picking': characterSelection[1].selectType === 1, 'banning': characterSelection[1].selectType === 0}"></div>
+    <img v-if="showFlash" class="flash" :class="{'picked': flashType === 1, 'banned': flashType === 0}" :src="flash" alt="" @click="hideFlash">
     <div class="controls">
       <el-button v-if="isHost" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
       <el-button v-if="isHost && showSwitchBtn" type="primary" icon="el-icon-refresh" circle @click="switchCaptains"></el-button>
@@ -20,7 +23,7 @@
           <el-row type="flex" justify="center" align="middle">
             <el-col :span="8">
               <div class="text-align-center">
-                <p v-if="characterSelection[0].showSelectText">{{characterSelection[0].selectText}}</p>
+                <p v-if="characterSelection[0].showSelectText && !isHost">{{characterSelection[0].selectText}}</p>
                 <p v-if="showRerollText">{{characterSelection[0].rerollText}}</p>
               </div>
             </el-col>
@@ -29,7 +32,7 @@
             </el-col>
             <el-col :span="8">
               <div class="text-align-center">
-                <p v-if="characterSelection[1].showSelectText">{{characterSelection[1].selectText}}</p>
+                <p v-if="characterSelection[1].showSelectText && !isHost">{{characterSelection[1].selectText}}</p>
                 <p v-if="showRerollText">{{characterSelection[1].rerollText}}</p>
               </div>
             </el-col>
@@ -50,7 +53,7 @@
     <el-row>
       <el-col :span="6">
         <div>
-          <h1>{{ characterSelection[0].name }}</h1>
+          <h1 class="fixed-width">{{ characterSelection[0].name }}</h1>
           <div v-for="(pick, index) in characterSelection[0].selection.picks" :key="index" class="selection pick">
             <img v-if="pick" :src="require(`@/assets/images/characters/${pick}`)" class="select">
           </div>
@@ -68,7 +71,7 @@
         </div>
       </el-col>
       <el-col :span="12">
-        <div class="boss" >
+        <div class="boss">
           <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
           <img v-if="showBoss" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
           <img v-if="showRoulette" src="@/assets/images/bosses/roulette.gif" class="boss-img large" alt="">
@@ -80,7 +83,7 @@
             <el-button type="danger" @click="vote(0)">No</el-button>
           </el-row>
         </div>
-        <div class="panel-container" :class="{'show': showPanel}">
+        <div v-if="!isHost" class="panel-container" :class="{'show': showPanel}">
           <el-scrollbar wrap-class="scrollbar-wrapper">
             <div class="character-panels">
               <div v-for="(row, index) in panels" :key="index" class="panel-col">
@@ -89,14 +92,20 @@
             </div>
           </el-scrollbar>
         </div>
+        <div v-else class="panel-container" :class="{'show': showPanel}">
+          <div class="select-text" :class="{'picking': selection === 1, 'banning': selection === 0}">
+            <h1>{{ selectName }}</h1>
+            <h3>{{ selectText }}</h3>
+          </div>
+        </div>
       </el-col>
       <el-col :span="6">
         <div v-if="players.length && characterSelection.length">
-          <h1>{{ characterSelection[1].name }}</h1>
-          <div v-for="(pick, index) in characterSelection[1].selection.picks" :key="index" class="selection pick">
+          <h1 class="fixed-width margin-left">{{ characterSelection[1].name }}</h1>
+          <div v-for="(pick, index) in characterSelection[1].selection.picks" :key="index" class="selection pick margin-left">
             <img v-if="pick" :src="require(`@/assets/images/characters/${pick}`)" class="select">
           </div>
-          <div v-for="(pick, index) in characterSelection[1].picksRemaining" :key="index" class="selection pick">
+          <div v-for="(pick, index) in characterSelection[1].picksRemaining" :key="index" class="selection pick margin-left">
             <img class="select">
           </div>
           <div v-if="characterSelection[1].showButton" class="forSelection" :class="{'deselect': !characterSelection[1].isTurn, 'pick': selection}" @click="enter">
@@ -127,12 +136,18 @@ export default {
       showRoulette: false,
       showBoss: false,
       showRerollText: false,
+      flash: null,
+      flashType: null,
+      showFlash: false,
+      selectName: '',
+      selectText: '',
+      selectType: null,
       panelCount: 0,
       isHost: this.$route.query.isHost,
       showSwitchBtn: true,
       userId: null,
       mode: this.$route.query.mode,
-      characterSelection: [],
+      characterSelection: null,
       pressed: false,
       boss: 0,
       rerollButtons: false,
@@ -237,6 +252,9 @@ export default {
         }
       })
     },
+    hideFlash () {
+      this.showFlash = false
+    },
     switchCaptains () {
       this.$confirm('This will switch the selection sequence.. Continue?', 'Warning', {
         confirmButtonText: 'Yes',
@@ -268,6 +286,8 @@ export default {
           picksRemaining: this.panelCount,
           selectText: '',
           showSelectText: false,
+          selectType: null,
+          showSelectType: false,
           isTurn: false,
           rerollText: false,
           selection: {
@@ -341,14 +361,25 @@ export default {
     },
     removeCharacterFromPanel (data) {
       this.addCharacterToSelectionPanel(data)
-      this.removeCharacterFromPanel(data)
-      this.characterSelection = this.characterSelection.map(info => {
-        info.isTurn = false
-        if (data.playerId === info.id) {
-          info.showSelectText = true
+      if (!this.isHost) {
+        this.removeCharacterFromPanel(data)
+        this.characterSelection = this.characterSelection.map(info => {
+          info.isTurn = false
+          if (data.playerId === info.id) {
+            info.showSelectText = true
+          }
+          return info
+        })
+      } else {
+        if (data.selection) {
+          new Audio(require(`@/assets/voice/${data.character.picked}`)).play()
+        } else {
+          new Audio(require(`@/assets/voice/${data.character.banned}`)).play()
         }
-        return info
-      })
+        this.flashType = data.selection
+        this.flash = require(`@/assets/images/flash/${data.character.flash}`)
+        this.showFlash = true
+      }
     },
     counter (time) {
       this.time = time
@@ -369,12 +400,17 @@ export default {
       this.selection = data.type
       this.characterSelected = null
       this.showRerollText = false
+      this.selectText = `is ${this.selection ? 'picking' : 'banning'}`
       this.characterSelection = this.characterSelection.map(info => {
         info.showButton = false
         info.showSelectText = false
+        info.selectType = this.selection
+        info.showSelectType = false
         info.selectText = `${info.name} is ${this.selection ? 'picking' : 'banning'}`
         if (data.id === info.id) {
           info.showSelectText = true
+          info.showSelectType = true
+          this.selectName = info.name
         }
         return info
       })
@@ -437,6 +473,30 @@ export default {
     padding: 1rem;
     position: relative;
   }
+  .player {
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 400px;
+    &.one {
+      left: 0;
+      &.banning {
+        background-image: radial-gradient(20em 100% at left, rgba(173, 0, 0, 0.932), transparent);
+      }
+      &.picking {
+        background-image: radial-gradient(20em 100% at left, rgba(0, 173, 37, 0.932), transparent);
+      }
+    }
+    &.two {
+      right: 0;
+      &.banning {
+        background-image: radial-gradient(20em 100% at right, rgba(173, 0, 0, 0.932), transparent);
+      }
+      &.picking {
+        background-image: radial-gradient(20em 100% at right, rgba(0, 173, 37, 0.932), transparent);
+      }
+    }
+  }
   .controls {
     position: absolute;
     top: .5rem;
@@ -453,6 +513,12 @@ export default {
     &.time {
       font-size: 5rem;
       margin: 0;
+    }
+    &.fixed-width {
+      max-width: 240px;
+    }
+    &.margin-left {
+      margin-left: auto;
     }
   }
   .text-align-center {
@@ -485,15 +551,15 @@ export default {
     }
   }
   .ban-panels {
-    margin: 3rem 0;
+    margin: 3rem 0 2rem;
   }
   .row {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
   }
   .row-reverse {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: row-reverse;
   }
   .panel-container {
@@ -534,12 +600,42 @@ export default {
       width: auto;
       transition: .2s;
       &.large {
-        max-height: 500px;
+        max-height: 350px;
       }
     }
   }
   h3 {
     text-align: center;
+  }
+  .select-text {
+    text-align: center;
+    max-width: 300px;
+    margin: auto;
+    padding: 1rem 0;
+    position: relative;
+    &.picking {
+      background-image: linear-gradient(to right, transparent, rgba(0, 173, 37, 0.932), transparent);
+    }
+    &.banning {
+      background-image: linear-gradient(to right, transparent, rgba(173, 0, 0, 0.932), transparent);
+    }
+  }
+  .flash {
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 80vh;
+    width: auto;
+    &.picked {
+      background-image: radial-gradient(10em 50% at center, rgba(0, 173, 37, 0.932), transparent);
+    }
+    &.banned {
+      background-image: radial-gradient(10em 50% at center, rgba(173, 0, 0, 0.932), transparent);
+    }
   }
   .selection {
     background-color: rgb(31, 31, 31);
@@ -547,7 +643,6 @@ export default {
     border-radius: 7px;
     margin-bottom: .4rem;
     overflow: hidden;
-    margin: 1rem auto;
     .select {
       height: 100%;
       width: auto;
@@ -557,11 +652,17 @@ export default {
     &.ban {
       height: 80px;
       width: 130px;
-      margin: 0 .5rem;
+      &:nth-child(2) {
+        margin-right: .5rem;
+        margin-left: .5rem;
+      }
     }
     &.pick {
-      height: 100px;
-      width: 200px;
+      height: 120px;
+      max-width: 240px;
+      &.margin-left {
+        margin-left: auto;
+      }
     }
   }
   .right {

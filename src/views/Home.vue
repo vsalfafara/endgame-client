@@ -10,7 +10,7 @@
           <el-input v-model="form.name" placeholder="GM Name"></el-input>
         </el-form-item>
         <el-form-item prop="key">
-          <el-input v-model="gmForm.key" placeholder="Secret Key"></el-input>
+          <el-input v-model="gmForm.key" type="password" placeholder="Secret Key"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="createRoom('gmForm')">Create Private Room</el-button>
