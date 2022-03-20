@@ -91,7 +91,7 @@
           </el-scrollbar>
         </div>
         <div v-else class="panel-container" :class="{'show': showPanel}">
-          <div class="select-text" :class="{'picking': selection === 1, 'banning': selection === 0}">
+          <div v-if="showSelectText" class="select-text" :class="{'picking': selection === 1, 'banning': selection === 0}">
             <h1>{{ selectName }}</h1>
             <h3>{{ selectText }}</h3>
           </div>
@@ -130,10 +130,13 @@ export default {
       noBan: null,
       players: [],
       panels: [],
+      characterAssets: [],
+      gmAssets: {},
       showPanel: false,
       showRoulette: false,
       showBoss: false,
       showRerollText: false,
+      showSelectText: false,
       flash: null,
       flashType: null,
       showFlash: false,
@@ -190,16 +193,35 @@ export default {
     )
     this.default = this.characters.filter(character => character.vision === 'Unknown')[0]
     this.noBan = this.characters.filter(character => character.vision === 'x')[0]
+    this.preload()
   },
   methods: {
+    preload () {
+      this.characterAssets = this.characters.map(character => {
+        return {
+          name: character.name,
+          picked: character.picked ? new Audio(require(`@/assets/voice/${character.picked}`)) : false,
+          banned: character.banned ? new Audio(require(`@/assets/voice/${character.banned}`)) : false,
+          flash: character.flash ? require(`@/assets/images/flash/${character.flash}`) : false
+        }
+      })
+      this.gmAssets = {
+        bossRoll: new Audio(require('@/assets/audio/randomroll.wav')),
+        bossReveal: new Audio(require('@/assets/audio/bosspick.wav')),
+        teamOneBan: new Audio(require('@/assets/audio/_team 1 ban.wav')),
+        teamTwoBan: new Audio(require('@/assets/audio/_team 2 ban.wav')),
+        teamOnePick: new Audio(require('@/assets/audio/_team 1 pick.wav')),
+        teamTwoPick: new Audio(require('@/assets/audio/_team 2 pick.wav')),
+        fileCount: require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
+      }
+    },
     reveal () {
-      new Audio(require('@/assets/audio/randomroll.wav')).play()
+      this.gmAssets.bossRoll.play()
       this.pressed = true
-      const fileCount = require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
-      this.boss = Math.floor(Math.random() * fileCount) + 1
+      this.boss = Math.floor(Math.random() * this.gmAssets.fileCount) + 1
       this.showRoulette = true
       setTimeout(() => {
-        new Audio(require('@/assets/audio/bosspick.wav')).play()
+        this.gmAssets.bossReveal.play()
         this.showRoulette = false
         this.showBoss = true
         this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
@@ -312,6 +334,7 @@ export default {
       this.$socket.client.emit('determineSequence', { room: this.$route.params.id, mode: this.$route.query.mode })
       this.$socket.client.emit('nextTurn', this.$route.params.id)
       this.$socket.client.emit('showPanel', this.$route.params.id)
+      this.showSelectText = true
     },
     determineReroll (data) {
       const vote = data.reroll.reduce((votes, info) => votes + info.voteReroll, 0)
@@ -372,13 +395,14 @@ export default {
         })
       } else {
         if (data.character.picked && data.character.banned && data.character.flash) {
+          const assets = this.characterAssets.find(character => character.name === data.character.name)
           this.flashType = data.selection
-          this.flash = require(`@/assets/images/flash/${data.character.flash}`)
+          this.flash = assets.flash
           this.showFlash = true
           if (data.selection) {
-            new Audio(require(`@/assets/voice/${data.character.picked}`)).play()
+            assets.picked.play()
           } else {
-            new Audio(require(`@/assets/voice/${data.character.banned}`)).play()
+            assets.banned.play()
           }
         }
         setTimeout(() => {
@@ -399,7 +423,7 @@ export default {
     },
     announceSelect (data) {
       if (this.isHost) {
-        new Audio(require(`@/assets/audio/${data.audio}`)).play()
+        this.gmAssets[data.audio].play()
       }
       this.currentSelecting = data.name
       this.selection = data.type
@@ -421,6 +445,7 @@ export default {
       })
     },
     hideElements () {
+      this.showSelectText = false
       this.characterSelection = this.characterSelection.map(info => {
         info.showSelectText = false
         info.showSelectType = false
