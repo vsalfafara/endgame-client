@@ -3,12 +3,13 @@
     <div v-if="characterSelection[0].showSelectType" class="player one" :class="{'picking': characterSelection[0].selectType === 1, 'banning': characterSelection[0].selectType === 0}"></div>
     <div v-if="characterSelection[1].showSelectType" class="player two" :class="{'picking': characterSelection[1].selectType === 1, 'banning': characterSelection[1].selectType === 0}"></div>
     <img v-if="showFlash" class="flash" :class="{'picked': flashType === 1, 'banned': flashType === 0}" :src="flash" alt="" @click="hideFlash">
+    <h1 class="time">{{time}}</h1>
     <div class="controls">
       <el-button v-if="isHost" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
       <el-button v-if="isHost && showSwitchBtn" type="primary" icon="el-icon-refresh" circle @click="switchCaptains"></el-button>
     </div>
     <div class="ban-panels">
-      <el-row>
+      <el-row type="flex" justify="space-between">
         <el-col :span="8">
           <div class="row">
             <div v-for="(ban, index) in characterSelection[0].selection.bans" :key="index" class="selection ban">
@@ -21,16 +22,13 @@
         </el-col>
         <el-col :span="8">
           <el-row type="flex" justify="center" align="middle">
-            <el-col :span="8">
+            <el-col :span="12">
               <div class="text-align-center">
                 <p v-if="characterSelection[0].showSelectText && !isHost">{{characterSelection[0].selectText}}</p>
                 <p v-if="showRerollText">{{characterSelection[0].rerollText}}</p>
               </div>
             </el-col>
-            <el-col :span="8">
-              <h1 class="time">{{time}}</h1>
-            </el-col>
-            <el-col :span="8">
+            <el-col :span="12">
               <div class="text-align-center">
                 <p v-if="characterSelection[1].showSelectText && !isHost">{{characterSelection[1].selectText}}</p>
                 <p v-if="showRerollText">{{characterSelection[1].rerollText}}</p>
@@ -195,11 +193,13 @@ export default {
   },
   methods: {
     reveal () {
+      new Audio(require('@/assets/audio/randomroll.wav')).play()
       this.pressed = true
       const fileCount = require.context('@/assets/images/bosses', false, /\.(webp)$/).keys().length
       this.boss = Math.floor(Math.random() * fileCount) + 1
       this.showRoulette = true
       setTimeout(() => {
+        new Audio(require('@/assets/audio/bosspick.wav')).play()
         this.showRoulette = false
         this.showBoss = true
         this.$socket.client.emit('boss', { boss: this.boss, room: this.$route.params.id })
@@ -242,14 +242,6 @@ export default {
         }
         info.showSelectText = false
         return info
-      })
-    },
-    removeCharacterFromPanel (data) {
-      this.panels = this.panels.map(panel => {
-        return {
-          color: panel.color,
-          characters: panel.characters.filter(character => character.name !== data.character.name)
-        }
       })
     },
     hideFlash () {
@@ -360,9 +352,17 @@ export default {
       this.selection = type
     },
     removeCharacterFromPanel (data) {
+      if (this.isHost) {
+        this.$socket.client.emit('stopTimer')
+      }
       this.addCharacterToSelectionPanel(data)
       if (!this.isHost) {
-        this.removeCharacterFromPanel(data)
+        this.panels = this.panels.map(panel => {
+          return {
+            color: panel.color,
+            characters: panel.characters.filter(character => character.name !== data.character.name)
+          }
+        })
         this.characterSelection = this.characterSelection.map(info => {
           info.isTurn = false
           if (data.playerId === info.id) {
@@ -371,14 +371,20 @@ export default {
           return info
         })
       } else {
-        this.flashType = data.selection
-        this.flash = require(`@/assets/images/flash/${data.character.flash}`)
-        this.showFlash = true
-        if (data.selection) {
-          new Audio(require(`@/assets/voice/${data.character.picked}`)).play()
-        } else {
-          new Audio(require(`@/assets/voice/${data.character.banned}`)).play()
+        if (data.character.picked && data.character.banned && data.character.flash) {
+          this.flashType = data.selection
+          this.flash = require(`@/assets/images/flash/${data.character.flash}`)
+          this.showFlash = true
+          if (data.selection) {
+            new Audio(require(`@/assets/voice/${data.character.picked}`)).play()
+          } else {
+            new Audio(require(`@/assets/voice/${data.character.banned}`)).play()
+          }
         }
+        setTimeout(() => {
+          this.showFlash = false
+          this.$socket.client.emit('nextTurn', this.$route.params.id)
+        }, 3000)
       }
     },
     counter (time) {
@@ -392,6 +398,9 @@ export default {
       })
     },
     announceSelect (data) {
+      if (this.isHost) {
+        new Audio(require(`@/assets/audio/${data.audio}`)).play()
+      }
       this.currentSelecting = data.name
       this.selection = data.type
       this.characterSelected = null
@@ -411,14 +420,16 @@ export default {
         return info
       })
     },
+    hideElements () {
+      this.characterSelection = this.characterSelection.map(info => {
+        info.showSelectText = false
+        info.showSelectType = false
+        info.selectText = ''
+        return info
+      })
+    },
     startTimeSelect () {
       this.$socket.client.emit('startTimeSelect')
-    },
-    nextTurn () {
-      this.$socket.client.emit('nextTurn', this.$route.params.id)
-    },
-    showSwitchBtn () {
-      this.switchBtn = true
     },
     reset () {
       this.selection = null
@@ -507,13 +518,21 @@ export default {
   }
   h1 {
     text-align: center;
-    margin: 0;
+    margin: 0 0 1rem;
     &.time {
-      font-size: 5rem;
+      clip-path: polygon(30% 100%, 70% 100%, 100% 0, 0 0);
+      background-color: #b90000;
+      width: 300px;
+      font-size: 3rem;
       margin: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
     }
     &.fixed-width {
-      max-width: 240px;
+      max-width: 220px;
     }
     &.margin-left {
       margin-left: auto;
@@ -656,8 +675,8 @@ export default {
       }
     }
     &.pick {
-      height: 120px;
-      max-width: 240px;
+      height: 100px;
+      max-width: 220px;
       &.margin-left {
         margin-left: auto;
       }

@@ -2,7 +2,10 @@ const Characters = [
   {
     name: 'x',
     vision: 'x',
-    image: 'zz.png'
+    image: 'zz.png',
+    picked: false,
+    banned: false,
+    flash: false
   },
   {
     name: 'Albedo',
@@ -122,7 +125,7 @@ const Characters = [
     image: 'hu-tao.png',
     picked: 'hutao_p.wav',
     banned: 'hutao_b.wav',
-    flash: 'Hu Tao.webp'
+    flash: 'Hu tao.webp'
   },
   {
     name: 'Jean',
