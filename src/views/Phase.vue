@@ -695,7 +695,7 @@ export default {
     }
     &.ban {
       width: 130px;
-      height: 100%;
+      height: 80px;
       &:nth-child(2) {
         margin-right: .5rem;
         margin-left: .5rem;
