@@ -254,7 +254,7 @@ const Characters = [
     name: 'Raiden Shogun',
     vision: 'Electro',
     image: 'raiden-shogun.png',
-    thumbnail: 'raiden-shogun_thumb.jpg',
+    thumbnail: 'raiden_thumb.jpg',
     picked: 'raiden_p.wav',
     banned: 'raiden_b.wav',
     flash: 'Raiden.webp'
