@@ -256,10 +256,10 @@ export default {
           return info
         }
         if (data.selection) {
-          info.selection.picks.push(data.character.image)
+          info.selection.picks.push(data.character.thumbnail)
           info.picksRemaining--
         } else {
-          info.selection.bans.push(data.character.image)
+          info.selection.bans.push(data.character.thumbnail)
           info.bansRemaining--
         }
         info.showSelectText = false
@@ -687,13 +687,15 @@ export default {
     overflow: hidden;
     .select {
       height: 100%;
-      width: auto;
+      width: 100%;
       display: block;
       margin: auto;
+      object-fit: cover;
+      object-position: center;
     }
     &.ban {
-      height: 80px;
       width: 130px;
+      height: 100%;
       &:nth-child(2) {
         margin-right: .5rem;
         margin-left: .5rem;
