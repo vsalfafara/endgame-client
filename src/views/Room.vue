@@ -83,10 +83,16 @@ export default {
   },
   methods: {
     getRoomLink () {
-      navigator.clipboard.writeText(window.location.origin + '/' + this.$route.params.id)
-      this.$message({
-        message: 'Game link copied to clipboard',
-        type: 'success'
+      this.$copyText(window.location.origin + '/' + this.$route.params.id).then(() => {
+        this.$message({
+          message: 'Game link copied to clipboard',
+          type: 'success'
+        })
+      }, () => {
+        this.$message({
+          message: 'Something went wrong...',
+          type: 'error'
+        })
       })
     },
     selectCaptain (player) {
