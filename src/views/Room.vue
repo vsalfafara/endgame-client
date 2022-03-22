@@ -30,9 +30,11 @@
                 </el-radio-group>
               </div>
             </el-form-item>
+            <el-form-item label="Invite Link">
+              <el-input v-model="link" readonly></el-input>
+            </el-form-item>
             <el-form-item class="buttons">
               <div class="btn-group">
-                <el-button @click="getRoomLink">Get Room Link</el-button>
                 <el-button type="primary" @click="start('form')">Start Game</el-button>
               </div>
             </el-form-item>
@@ -62,6 +64,7 @@ export default {
       captains: [],
       isHost: false,
       userId: null,
+      link: window.location.origin + '/' + this.$route.params.id,
       form: {
         room: this.$route.params.id,
         mode: null,
@@ -82,19 +85,6 @@ export default {
     this.$socket.client.emit('getAllPlayersInRoom', this.$route.params.id)
   },
   methods: {
-    getRoomLink () {
-      this.$copyText(window.location.origin + '/' + this.$route.params.id).then(() => {
-        this.$message({
-          message: 'Game link copied to clipboard',
-          type: 'success'
-        })
-      }, () => {
-        this.$message({
-          message: 'Something went wrong...',
-          type: 'error'
-        })
-      })
-    },
     selectCaptain (player) {
       if (this.isHost) {
         const existingCaptain = this.captains.find(captain => captain.id === player.id)
