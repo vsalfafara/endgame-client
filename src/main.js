@@ -8,7 +8,7 @@ import 'element-theme-dark'
 import VueSocketIOExt from 'vue-socket.io-extended'
 import { io } from 'socket.io-client'
 
-const socket = io('https://endgame-server.herokuapp.com/')
+const socket = io('http://103.253.146.189:5000/')
 // const socket = io('http://localhost:5000/')
 
 Vue.config.productionTip = false
