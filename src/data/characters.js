@@ -155,7 +155,7 @@ const Characters = [
     name: 'Kaedahara Kazuha',
     vision: 'Anemo',
     image: 'kaedahara-kazuha.png',
-    close: 'kaedahara-kazuha_thumb.jpg',
+    thumbnail: 'kaedahara-kazuha_thumb.jpg',
     picked: 'kazuha_p.wav',
     banned: 'kazuha_b.wav',
     flash: 'Kazuha.webp'

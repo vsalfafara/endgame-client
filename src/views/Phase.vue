@@ -4,9 +4,12 @@
     <div v-if="characterSelection[1].showSelectType" class="player two" :class="{'picking': characterSelection[1].selectType === 1, 'banning': characterSelection[1].selectType === 0}"></div>
     <img v-if="showFlash" class="flash" :class="{'picked': flashType === 1, 'banned': flashType === 0}" :src="flash" alt="" @click="hideFlash">
     <h1 class="time">{{time}}</h1>
-    <div class="controls">
-      <el-button v-if="isHost" type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
-      <el-button v-if="isHost && showSwitchBtn" type="primary" icon="el-icon-refresh" circle @click="switchCaptains"></el-button>
+    <div v-if="isHost" class="controls">
+      <el-button type="success" icon="el-icon-back" circle @click="back"></el-button>
+      <div>
+        <el-button type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
+        <el-button type="primary" icon="el-icon-refresh" circle @click="switchCaptains"></el-button>
+      </div>
     </div>
     <div class="ban-panels">
       <el-row type="flex" justify="space-between">
@@ -62,8 +65,8 @@
             <div v-if="!characterSelection[0].isTurn" class="disabled"></div>
             <img :src="require(`@/assets/images/characters/${characterSelected.image}`)" alt="">
             <div class="text">
-              <h3>{{selection ? 'Pick' : 'Ban'}}</h3>
-              <h1>{{characterSelected.name}}</h1>
+              <h5>{{selection ? 'Pick' : 'Ban'}}</h5>
+              <h3>{{characterSelected.name}}</h3>
             </div>
           </div>
         </div>
@@ -110,8 +113,8 @@
             <div v-if="!characterSelection[1].isTurn" class="disabled"></div>
             <img :src="require(`@/assets/images/characters/${characterSelected.image}`)" alt="">
             <div class="text">
-              <h3>{{selection ? 'Pick' : 'Ban'}}</h3>
-              <h1>{{characterSelected.name}}</h1>
+              <h5>{{selection ? 'Pick' : 'Ban'}}</h5>
+              <h3>{{characterSelected.name}}</h3>
             </div>
           </div>
         </div>
@@ -286,6 +289,9 @@ export default {
       }).then(() => {
         this.$socket.client.emit('reset', { room: this.$route.params.id, type: 0 })
       })
+    },
+    back () {
+      this.$router.back()
     }
   },
   sockets: {
@@ -405,10 +411,11 @@ export default {
             assets.banned.play()
           }
         }
+        this.showSelectText = false
         setTimeout(() => {
           this.showFlash = false
           this.$socket.client.emit('nextTurn', this.$route.params.id)
-        }, 3000)
+        }, 4000)
       }
     },
     counter (time) {
@@ -429,6 +436,7 @@ export default {
       this.selection = data.type
       this.characterSelected = null
       this.showRerollText = false
+      this.showSelectText = true
       this.selectText = `is ${this.selection ? 'picking' : 'banning'}`
       this.characterSelection = this.characterSelection.map(info => {
         info.showButton = false
@@ -446,6 +454,7 @@ export default {
     },
     hideElements () {
       this.showSelectText = false
+      this.showPanel = false
       this.characterSelection = this.characterSelection.map(info => {
         info.showSelectText = false
         info.showSelectType = false
@@ -506,6 +515,9 @@ export default {
   .container {
     padding: 1rem;
     position: relative;
+    max-width: 1400px;
+    width: 100%;
+    margin: auto;
   }
   .player {
     position: fixed;
@@ -534,9 +546,11 @@ export default {
   .controls {
     position: absolute;
     top: .5rem;
-    right: .5rem;
+    width: 100%;
     z-index: 2;
+    padding-right: 2rem;
     display: flex;
+    justify-content: space-between;
     .el-button {
       margin: 0 .5rem;
     }
@@ -557,7 +571,7 @@ export default {
       margin: 0 auto;
     }
     &.fixed-width {
-      max-width: 220px;
+      max-width: 192px;
     }
     &.margin-left {
       margin-left: auto;
@@ -681,13 +695,13 @@ export default {
   }
   .selection {
     background-color: rgb(31, 31, 31);
-    border: 1px solid rgb(88, 88, 88);
+    border: 1px solid rgb(116, 116, 116);
     border-radius: 7px;
     margin-bottom: .4rem;
     overflow: hidden;
     .select {
       height: 100%;
-      width: 100%;
+      // width: 100%;
       display: block;
       margin: auto;
       object-fit: cover;
@@ -702,8 +716,8 @@ export default {
       }
     }
     &.pick {
-      height: 100px;
-      max-width: 220px;
+      height: 108px;
+      max-width: 192px;
       &.margin-left {
         margin-left: auto;
       }
@@ -720,7 +734,7 @@ export default {
     align-items: flex-start;
   }
   .forSelection {
-    height: 120px;
+    height: 80px;
     width: 100%;
     border: 1px solid rgb(70, 70, 70);
     overflow: hidden;
@@ -744,7 +758,7 @@ export default {
     }
     .text {
       padding-right: 2rem;
-      h3, h1 {
+      h5, h3 {
         margin: 0;
         text-align: right;
       }
