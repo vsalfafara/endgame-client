@@ -16,7 +16,7 @@
         <el-col :span="8">
           <div class="row">
             <div v-for="(ban, index) in characterSelection[0].selection.bans" :key="index" class="selection ban">
-              <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
+              <img v-if="ban" :src="ban" class="select">
             </div>
             <div v-for="(ban, index) in characterSelection[0].bansRemaining" :key="index" class="selection ban">
               <img class="select">
@@ -42,7 +42,7 @@
         <el-col :span="8">
           <div class="row-reverse">
             <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
-              <img v-if="ban" :src="require(`@/assets/images/characters/${ban}`)" class="select">
+              <img v-if="ban" :src="ban" class="select">
             </div>
             <div v-for="(ban, index) in characterSelection[1].bansRemaining" :key="index" class="selection ban">
               <img class="select">
@@ -56,14 +56,14 @@
         <div>
           <h1 class="fixed-width">{{ characterSelection[0].name }}</h1>
           <div v-for="(pick, index) in characterSelection[0].selection.picks" :key="index" class="selection pick">
-            <img v-if="pick" :src="require(`@/assets/images/characters/${pick}`)" class="select">
+            <img v-if="pick" :src="pick" class="select">
           </div>
           <div v-for="(pick, index) in characterSelection[0].picksRemaining" :key="index" class="selection pick">
             <img class="select">
           </div>
           <div v-if="characterSelection[0].showButton" class="forSelection" :class="{'deselect': !characterSelection[0].isTurn, 'pick': selection}" @click="enter">
             <div v-if="!characterSelection[0].isTurn" class="disabled"></div>
-            <img :src="require(`@/assets/images/characters/${characterSelected.image}`)" alt="">
+            <img :src="characterSelected.image" alt="">
             <div class="text">
               <h5>{{selection ? 'Pick' : 'Ban'}}</h5>
               <h3>{{characterSelected.name}}</h3>
@@ -88,7 +88,7 @@
           <el-scrollbar wrap-class="scrollbar-wrapper">
             <div class="character-panels">
               <div v-for="(row, index) in panels" :key="index" class="panel-col">
-                <img v-for="(character, cIndex) in row.characters" :key="cIndex" :src="require(`@/assets/images/characters/${character.image}`)" @click="select(character)" class="panel" :class="row.color">
+                <img v-for="(character, cIndex) in row.characters" :key="cIndex" :src="character.image" @click="select(character)" class="panel" :class="row.color">
               </div>
             </div>
           </el-scrollbar>
@@ -104,14 +104,14 @@
         <div v-if="players.length && characterSelection.length">
           <h1 class="fixed-width margin-left">{{ characterSelection[1].name }}</h1>
           <div v-for="(pick, index) in characterSelection[1].selection.picks" :key="index" class="selection pick margin-left">
-            <img v-if="pick" :src="require(`@/assets/images/characters/${pick}`)" class="select">
+            <img v-if="pick" :src="pick" class="select">
           </div>
           <div v-for="(pick, index) in characterSelection[1].picksRemaining" :key="index" class="selection pick margin-left">
             <img class="select">
           </div>
           <div v-if="characterSelection[1].showButton" class="forSelection" :class="{'deselect': !characterSelection[1].isTurn, 'pick': selection}" @click="enter">
             <div v-if="!characterSelection[1].isTurn" class="disabled"></div>
-            <img :src="require(`@/assets/images/characters/${characterSelected.image}`)" alt="">
+            <img :src="characterSelected.image" alt="">
             <div class="text">
               <h5>{{selection ? 'Pick' : 'Ban'}}</h5>
               <h3>{{characterSelected.name}}</h3>
@@ -203,9 +203,9 @@ export default {
       this.characterAssets = this.characters.map(character => {
         return {
           name: character.name,
-          picked: character.picked ? new Audio(require(`@/assets/voice/${character.picked}`)) : false,
-          banned: character.banned ? new Audio(require(`@/assets/voice/${character.banned}`)) : false,
-          flash: character.flash ? require(`@/assets/images/flash/${character.flash}`) : false
+          picked: character.picked ? character.picked : false,
+          banned: character.banned ? character.banned : false,
+          flash: character.flash ? character.flash : false
         }
       })
       this.gmAssets = {

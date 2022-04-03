@@ -2,7 +2,7 @@ const Characters = [
   {
     name: 'x',
     vision: 'x',
-    image: 'zz.png',
+    image: require('../assets/images/characters/zz.webp'),
     picked: false,
     banned: false,
     flash: false
@@ -10,421 +10,430 @@ const Characters = [
   {
     name: 'Albedo',
     vision: 'Geo',
-    image: 'albedo.png',
-    thumbnail: 'albedo_thumb.jpg',
-    picked: 'albedo_p.wav',
-    banned: 'albedo_b.wav',
-    flash: 'Albedo.webp'
+    image: require('../assets/images/characters/albedo.webp'),
+    thumbnail: require('../assets/images/thumbnail/albedo_thumb.webp'),
+    picked: new Audio(require('../assets/voice/albedo_p.wav')),
+    banned: new Audio(require('../assets/voice/albedo_b.wav')),
+    flash: require('../assets/images/flash/Albedo.webp')
   },
   {
     name: 'Aloy',
     vision: 'Cryo',
-    image: 'aloy.png',
-    thumbnail: 'aloy_thumb.jpg',
-    picked: 'aloy_p.wav',
-    banned: 'aloy_b.wav',
-    flash: 'Aloy.webp'
+    image: require('../assets/images/characters/aloy.webp'),
+    thumbnail: require('../assets/images/thumbnail/aloy_thumb.webp'),
+    picked: new Audio(require('../assets/voice/aloy_p.wav')),
+    banned: new Audio(require('../assets/voice/aloy_b.wav')),
+    flash: require('../assets/images/flash/Aloy.webp')
   },
   {
     name: 'Amber',
     vision: 'Pyro',
-    image: 'amber.png',
-    thumbnail: 'amber_thumb.jpg',
-    picked: 'amber_p.wav',
-    banned: 'amber_b.wav',
-    flash: 'Amber.webp'
+    image: require('../assets/images/characters/amber.webp'),
+    thumbnail: require('../assets/images/thumbnail/amber_thumb.webp'),
+    picked: new Audio(require('../assets/voice/amber_p.wav')),
+    banned: new Audio(require('../assets/voice/amber_b.wav')),
+    flash: require('../assets/images/flash/Amber.webp')
   },
   {
     name: 'Arataki Itto',
     vision: 'Geo',
-    image: 'arataki-itto.png',
-    thumbnail: 'arataki-itto_thumb.jpg',
-    picked: 'itto_p.wav',
-    banned: 'itto_b.wav',
-    flash: 'Itto.webp'
+    image: require('../assets/images/characters/arataki-itto.webp'),
+    thumbnail: require('../assets/images/thumbnail/arataki-itto_thumb.webp'),
+    picked: new Audio(require('../assets/voice/itto_p.wav')),
+    banned: new Audio(require('../assets/voice/itto_b.wav')),
+    flash: require('../assets/images/flash/Itto.webp')
   },
   {
     name: 'Barbara',
     vision: 'Hydro',
-    image: 'barbara.png',
-    thumbnail: 'barbara_thumb.jpg',
-    picked: 'barbara_p.wav',
-    banned: 'barbara_b.wav',
-    flash: 'Barbara.webp'
+    image: require('../assets/images/characters/barbara.webp'),
+    thumbnail: require('../assets/images/thumbnail/barbara_thumb.webp'),
+    picked: new Audio(require('../assets/voice/barbara_p.wav')),
+    banned: new Audio(require('../assets/voice/barbara_b.wav')),
+    flash: require('../assets/images/flash/Barbara.webp')
   },
   {
     name: 'Beidou',
     vision: 'Electro',
-    image: 'beidou.png',
-    thumbnail: 'beidou_thumb.jpg',
-    picked: 'beidou_p.wav',
-    banned: 'beidou_b.wav',
-    flash: 'Beidou.webp'
+    image: require('../assets/images/characters/beidou.webp'),
+    thumbnail: require('../assets/images/thumbnail/beidou_thumb.webp'),
+    picked: new Audio(require('../assets/voice/beidou_p.wav')),
+    banned: new Audio(require('../assets/voice/beidou_b.wav')),
+    flash: require('../assets/images/flash/Beidou.webp')
   },
   {
     name: 'Bennett',
     vision: 'Pyro',
-    image: 'bennett.png',
-    thumbnail: 'bennett_thumb.jpg',
-    picked: 'bennett_p.wav',
-    banned: 'bennett_b.wav',
-    flash: 'Bennett.webp'
+    image: require('../assets/images/characters/bennett.webp'),
+    thumbnail: require('../assets/images/thumbnail/bennett_thumb.webp'),
+    picked: new Audio(require('../assets/voice/bennett_p.wav')),
+    banned: new Audio(require('../assets/voice/bennett_b.wav')),
+    flash: require('../assets/images/flash/Bennett.webp')
   },
   {
     name: 'Chongyun',
     vision: 'Cryo',
-    image: 'chongyun.png',
-    thumbnail: 'chongyun_thumb.jpg',
-    picked: 'chongyun_p.wav',
-    banned: 'chongyun_b.wav',
-    flash: 'Chongyun.webp'
+    image: require('../assets/images/characters/chongyun.webp'),
+    thumbnail: require('../assets/images/thumbnail/chongyun_thumb.webp'),
+    picked: new Audio(require('../assets/voice/chongyun_p.wav')),
+    banned: new Audio(require('../assets/voice/chongyun_b.wav')),
+    flash: require('../assets/images/flash/Chongyun.webp')
   },
   {
     name: 'Diluc',
     vision: 'Pyro',
-    image: 'diluc.png',
-    thumbnail: 'diluc_thumb.jpg',
-    picked: 'diluc_p.wav',
-    banned: 'diluc_b.wav',
-    flash: 'Diluc.webp'
+    image: require('../assets/images/characters/diluc.webp'),
+    thumbnail: require('../assets/images/thumbnail/diluc_thumb.webp'),
+    picked: new Audio(require('../assets/voice/diluc_p.wav')),
+    banned: new Audio(require('../assets/voice/diluc_b.wav')),
+    flash: require('../assets/images/flash/Diluc.webp')
   },
   {
     name: 'Diona',
     vision: 'Cryo',
-    image: 'diona.png',
-    thumbnail: 'diona_thumb.jpg',
-    picked: 'diona_p.wav',
-    banned: 'diona_b.wav',
-    flash: 'Diona.webp'
+    image: require('../assets/images/characters/diona.webp'),
+    thumbnail: require('../assets/images/thumbnail/diona_thumb.webp'),
+    picked: new Audio(require('../assets/voice/diona_p.wav')),
+    banned: new Audio(require('../assets/voice/diona_b.wav')),
+    flash: require('../assets/images/flash/Diona.webp')
   },
   {
     name: 'Eula',
     vision: 'Cryo',
-    image: 'eula.png',
-    thumbnail: 'eula_thumb.jpg',
-    picked: 'eula_p.wav',
-    banned: 'eula_b.wav',
-    flash: 'Eula.webp'
+    image: require('../assets/images/characters/eula.webp'),
+    thumbnail: require('../assets/images/thumbnail/eula_thumb.webp'),
+    picked: new Audio(require('../assets/voice/eula_p.wav')),
+    banned: new Audio(require('../assets/voice/eula_b.wav')),
+    flash: require('../assets/images/flash/Eula.webp')
   },
   {
     name: 'Fischl',
     vision: 'Electro',
-    image: 'fischl.png',
-    thumbnail: 'fischl_thumb.jpg',
-    picked: 'fischl_p.wav',
-    banned: 'fischl_b.wav',
-    flash: 'Fischl.webp'
+    image: require('../assets/images/characters/fischl.webp'),
+    thumbnail: require('../assets/images/thumbnail/fischl_thumb.webp'),
+    picked: new Audio(require('../assets/voice/fischl_p.wav')),
+    banned: new Audio(require('../assets/voice/fischl_b.wav')),
+    flash: require('../assets/images/flash/Fischl.webp')
   },
   {
     name: 'Ganyu',
     vision: 'Cryo',
-    image: 'ganyu.png',
-    thumbnail: 'ganyu_thumb.jpg',
-    picked: 'ganyu_p.wav',
-    banned: 'ganyu_b.wav',
-    flash: 'Ganyu.webp'
+    image: require('../assets/images/characters/ganyu.webp'),
+    thumbnail: require('../assets/images/thumbnail/ganyu_thumb.webp'),
+    picked: new Audio(require('../assets/voice/ganyu_p.wav')),
+    banned: new Audio(require('../assets/voice/ganyu_b.wav')),
+    flash: require('../assets/images/flash/Ganyu.webp')
   },
   {
     name: 'Gorou',
     vision: 'Geo',
-    image: 'gorou.png',
-    thumbnail: 'gorou_thumb.jpg',
-    picked: 'gorou_p.wav',
-    banned: 'gorou_b.wav',
-    flash: 'Gorou.webp'
+    image: require('../assets/images/characters/gorou.webp'),
+    thumbnail: require('../assets/images/thumbnail/gorou_thumb.webp'),
+    picked: new Audio(require('../assets/voice/gorou_p.wav')),
+    banned: new Audio(require('../assets/voice/gorou_b.wav')),
+    flash: require('../assets/images/flash/Gorou.webp')
   },
   {
     name: 'Hu Tao',
     vision: 'Pyro',
-    image: 'hu-tao.png',
-    thumbnail: 'hu-tao_thumb.jpg',
-    picked: 'hutao_p.wav',
-    banned: 'hutao_b.wav',
-    flash: 'Hu tao.webp'
+    image: require('../assets/images/characters/hu-tao.webp'),
+    thumbnail: require('../assets/images/thumbnail/hu-tao_thumb.webp'),
+    picked: new Audio(require('../assets/voice/hutao_p.wav')),
+    banned: new Audio(require('../assets/voice/hutao_b.wav')),
+    flash: require('../assets/images/flash/Hu tao.webp')
   },
   {
     name: 'Jean',
     vision: 'Anemo',
-    image: 'jean.png',
-    thumbnail: 'jean_thumb.jpg',
-    picked: 'jean_p.wav',
-    banned: 'jean_b.wav',
-    flash: 'Jean.webp'
+    image: require('../assets/images/characters/jean.webp'),
+    thumbnail: require('../assets/images/thumbnail/jean_thumb.webp'),
+    picked: new Audio(require('../assets/voice/jean_p.wav')),
+    banned: new Audio(require('../assets/voice/jean_b.wav')),
+    flash: require('../assets/images/flash/Jean.webp')
   },
   {
     name: 'Kaedahara Kazuha',
     vision: 'Anemo',
-    image: 'kaedahara-kazuha.png',
-    thumbnail: 'kaedahara-kazuha_thumb.jpg',
-    picked: 'kazuha_p.wav',
-    banned: 'kazuha_b.wav',
-    flash: 'Kazuha.webp'
+    image: require('../assets/images/characters/kaedahara-kazuha.webp'),
+    thumbnail: require('../assets/images/thumbnail/kaedahara-kazuha_thumb.webp'),
+    picked: new Audio(require('../assets/voice/kazuha_p.wav')),
+    banned: new Audio(require('../assets/voice/kazuha_b.wav')),
+    flash: require('../assets/images/flash/Kazuha.webp')
   },
   {
     name: 'Kaeya',
     vision: 'Cryo',
-    image: 'kaeya.png',
-    thumbnail: 'kaeya_thumb.jpg',
-    picked: 'kaeya_p.wav',
-    banned: 'kaeya_b.wav',
-    flash: 'Kaeya.webp'
+    image: require('../assets/images/characters/kaeya.webp'),
+    thumbnail: require('../assets/images/thumbnail/kaeya_thumb.webp'),
+    picked: new Audio(require('../assets/voice/kaeya_p.wav')),
+    banned: new Audio(require('../assets/voice/kaeya_b.wav')),
+    flash: require('../assets/images/flash/Kaeya.webp')
   },
   {
     name: 'Kamisato Ayaka',
     vision: 'Cryo',
-    image: 'kamisato-ayaka.png',
-    thumbnail: 'kamisato-ayaka_thumb.jpg',
-    picked: 'ayaka_p.wav',
-    banned: 'ayaka_b.wav',
-    flash: 'Ayaka.webp'
+    image: require('../assets/images/characters/kamisato-ayaka.webp'),
+    thumbnail: require('../assets/images/thumbnail/kamisato-ayaka_thumb.webp'),
+    picked: new Audio(require('../assets/voice/ayaka_p.wav')),
+    banned: new Audio(require('../assets/voice/ayaka_b.wav')),
+    flash: require('../assets/images/flash/Ayaka.webp')
+  },
+  {
+    name: 'Kamisato Ayato',
+    vision: 'Hydro',
+    image: require('../assets/images/characters/kamisato-ayato.webp'),
+    thumbnail: require('../assets/images/thumbnail/kamisato-ayato_thumb.webp'),
+    picked: new Audio(require('../assets/voice/ayato_p.wav')),
+    banned: new Audio(require('../assets/voice/ayato_b.wav')),
+    flash: require('../assets/images/flash/Ayato.webp')
   },
   {
     name: 'Keqing',
     vision: 'Electro',
-    image: 'keqing.png',
-    thumbnail: 'keqing_thumb.jpg',
-    picked: 'keqing_p.wav',
-    banned: 'keqing_b.wav',
-    flash: 'Keqing.webp'
+    image: require('../assets/images/characters/keqing.webp'),
+    thumbnail: require('../assets/images/thumbnail/keqing_thumb.webp'),
+    picked: new Audio(require('../assets/voice/keqing_p.wav')),
+    banned: new Audio(require('../assets/voice/keqing_b.wav')),
+    flash: require('../assets/images/flash/Keqing.webp')
   },
   {
     name: 'Klee',
     vision: 'Pyro',
-    image: 'klee.png',
-    thumbnail: 'klee_thumb.jpg',
-    picked: 'klee_p.wav',
-    banned: 'klee_b.wav',
-    flash: 'Klee.webp'
+    image: require('../assets/images/characters/klee.webp'),
+    thumbnail: require('../assets/images/thumbnail/klee_thumb.webp'),
+    picked: new Audio(require('../assets/voice/klee_p.wav')),
+    banned: new Audio(require('../assets/voice/klee_b.wav')),
+    flash: require('../assets/images/flash/Klee.webp')
   },
   {
     name: 'Kujou Sara',
     vision: 'Electro',
-    image: 'kujou-sara.png',
-    thumbnail: 'kujou-sara_thumb.jpg',
-    picked: 'sara_p.wav',
-    banned: 'sara_b.wav',
-    flash: 'Sara.webp'
+    image: require('../assets/images/characters/kujou-sara.webp'),
+    thumbnail: require('../assets/images/thumbnail/kujou-sara_thumb.webp'),
+    picked: new Audio(require('../assets/voice/sara_p.wav')),
+    banned: new Audio(require('../assets/voice/sara_b.wav')),
+    flash: require('../assets/images/flash/Sara.webp')
   },
   {
     name: 'Lisa',
     vision: 'Electro',
-    image: 'lisa.png',
-    thumbnail: 'lisa_thumb.jpg',
-    picked: 'lisa_p.wav',
-    banned: 'lisa_b.wav',
-    flash: 'Lisa.webp'
+    image: require('../assets/images/characters/lisa.webp'),
+    thumbnail: require('../assets/images/thumbnail/lisa_thumb.webp'),
+    picked: new Audio(require('../assets/voice/lisa_p.wav')),
+    banned: new Audio(require('../assets/voice/lisa_b.wav')),
+    flash: require('../assets/images/flash/Lisa.webp')
   },
   {
     name: 'Mona',
     vision: 'Hydro',
-    image: 'mona.png',
-    thumbnail: 'mona_thumb.jpg',
-    picked: 'mona_p.wav',
-    banned: 'mona_b.wav',
-    flash: 'Mona.webp'
+    image: require('../assets/images/characters/mona.webp'),
+    thumbnail: require('../assets/images/thumbnail/mona_thumb.webp'),
+    picked: new Audio(require('../assets/voice/mona_p.wav')),
+    banned: new Audio(require('../assets/voice/mona_b.wav')),
+    flash: require('../assets/images/flash/Mona.webp')
   },
   {
     name: 'Ningguang',
     vision: 'Geo',
-    image: 'ningguang.png',
-    thumbnail: 'ningguang_thumb.jpg',
-    picked: 'ningguang_p.wav',
-    banned: 'ningguang_b.wav',
-    flash: 'Ningguang.webp'
+    image: require('../assets/images/characters/ningguang.webp'),
+    thumbnail: require('../assets/images/thumbnail/ningguang_thumb.webp'),
+    picked: new Audio(require('../assets/voice/ningguang_p.wav')),
+    banned: new Audio(require('../assets/voice/ningguang_b.wav')),
+    flash: require('../assets/images/flash/Ningguang.webp')
   },
   {
     name: 'Noelle',
     vision: 'Geo',
-    image: 'noelle.png',
-    thumbnail: 'noelle_thumb.jpg',
-    picked: 'noelle_p.wav',
-    banned: 'noelle_b.wav',
-    flash: 'Noelle.webp'
+    image: require('../assets/images/characters/noelle.webp'),
+    thumbnail: require('../assets/images/thumbnail/noelle_thumb.webp'),
+    picked: new Audio(require('../assets/voice/noelle_p.wav')),
+    banned: new Audio(require('../assets/voice/noelle_b.wav')),
+    flash: require('../assets/images/flash/Noelle.webp')
   },
   {
     name: 'Qiqi',
     vision: 'Cryo',
-    image: 'qiqi.png',
-    thumbnail: 'qiqi_thumb.jpg',
-    picked: 'qiqi_p.wav',
-    banned: 'qiqi_b.wav',
-    flash: 'Qiqi.webp'
+    image: require('../assets/images/characters/qiqi.webp'),
+    thumbnail: require('../assets/images/thumbnail/qiqi_thumb.webp'),
+    picked: new Audio(require('../assets/voice/qiqi_p.wav')),
+    banned: new Audio(require('../assets/voice/qiqi_b.wav')),
+    flash: require('../assets/images/flash/Qiqi.webp')
   },
   {
     name: 'Raiden Shogun',
     vision: 'Electro',
-    image: 'raiden-shogun.png',
-    thumbnail: 'raiden_thumb.jpg',
-    picked: 'raiden_p.wav',
-    banned: 'raiden_b.wav',
-    flash: 'Raiden.webp'
+    image: require('../assets/images/characters/raiden-shogun.webp'),
+    thumbnail: require('../assets/images/thumbnail/raiden_thumb.webp'),
+    picked: new Audio(require('../assets/voice/raiden_p.wav')),
+    banned: new Audio(require('../assets/voice/raiden_b.wav')),
+    flash: require('../assets/images/flash/Raiden.webp')
   },
   {
     name: 'Razor',
     vision: 'Electro',
-    image: 'razor.png',
-    thumbnail: 'razor_thumb.jpg',
-    picked: 'razor_p.wav',
-    banned: 'razor_b.wav',
-    flash: 'Razor.webp'
+    image: require('../assets/images/characters/razor.webp'),
+    thumbnail: require('../assets/images/thumbnail/razor_thumb.webp'),
+    picked: new Audio(require('../assets/voice/razor_p.wav')),
+    banned: new Audio(require('../assets/voice/razor_b.wav')),
+    flash: require('../assets/images/flash/Razor.webp')
   },
   {
     name: 'Rosaria',
     vision: 'Cryo',
-    image: 'rosaria.png',
-    thumbnail: 'rosaria_thumb.jpg',
-    picked: 'rosaria_p.wav',
-    banned: 'rosaria_b.wav',
-    flash: 'Rosaria.webp'
+    image: require('../assets/images/characters/rosaria.webp'),
+    thumbnail: require('../assets/images/thumbnail/rosaria_thumb.webp'),
+    picked: new Audio(require('../assets/voice/rosaria_p.wav')),
+    banned: new Audio(require('../assets/voice/rosaria_b.wav')),
+    flash: require('../assets/images/flash/Rosaria.webp')
   },
   {
     name: 'Sangonomiya Kokomi',
     vision: 'Hydro',
-    image: 'sangonomiya-kokomi.png',
-    thumbnail: 'sangonomiya-kokomi_thumb.jpg',
-    picked: 'kokomi_p.wav',
-    banned: 'kokomi_b.wav',
-    flash: 'Kokomi.webp'
+    image: require('../assets/images/characters/sangonomiya-kokomi.webp'),
+    thumbnail: require('../assets/images/thumbnail/sangonomiya-kokomi_thumb.webp'),
+    picked: new Audio(require('../assets/voice/kokomi_p.wav')),
+    banned: new Audio(require('../assets/voice/kokomi_b.wav')),
+    flash: require('../assets/images/flash/Kokomi.webp')
   },
   {
     name: 'Sayu',
     vision: 'Anemo',
-    image: 'sayu.png',
-    thumbnail: 'sayu_thumb.jpg',
-    picked: 'sayu_p.wav',
-    banned: 'sayu_b.wav',
-    flash: 'Sayu.webp'
+    image: require('../assets/images/characters/sayu.webp'),
+    thumbnail: require('../assets/images/thumbnail/sayu_thumb.webp'),
+    picked: new Audio(require('../assets/voice/sayu_p.wav')),
+    banned: new Audio(require('../assets/voice/sayu_b.wav')),
+    flash: require('../assets/images/flash/Sayu.webp')
   },
   {
     name: 'Shenhe',
     vision: 'Cryo',
-    image: 'shenhe.png',
-    thumbnail: 'shenhe_thumb.jpg',
-    picked: 'shenhe_p.wav',
-    banned: 'shenhe_b.wav',
-    flash: 'Shenhe.webp'
+    image: require('../assets/images/characters/shenhe.webp'),
+    thumbnail: require('../assets/images/thumbnail/shenhe_thumb.webp'),
+    picked: new Audio(require('../assets/voice/shenhe_p.wav')),
+    banned: new Audio(require('../assets/voice/shenhe_b.wav')),
+    flash: require('../assets/images/flash/Shenhe.webp')
   },
   {
     name: 'Sucrose',
     vision: 'Anemo',
-    image: 'sucrose.png',
-    thumbnail: 'sucrose_thumb.jpg',
-    picked: 'sucrose_p.wav',
-    banned: 'sucrose_b.wav',
-    flash: 'Sucrose.webp'
+    image: require('../assets/images/characters/sucrose.webp'),
+    thumbnail: require('../assets/images/thumbnail/sucrose_thumb.webp'),
+    picked: new Audio(require('../assets/voice/sucrose_p.wav')),
+    banned: new Audio(require('../assets/voice/sucrose_b.wav')),
+    flash: require('../assets/images/flash/Sucrose.webp')
   },
   {
     name: 'Tartaglia',
     vision: 'Hydro',
-    image: 'tartaglia.png',
-    thumbnail: 'tartaglia_thumb.jpg',
-    picked: 'childe_p.wav',
-    banned: 'childe_b.wav',
-    flash: 'Childe.webp'
+    image: require('../assets/images/characters/tartaglia.webp'),
+    thumbnail: require('../assets/images/thumbnail/tartaglia_thumb.webp'),
+    picked: new Audio(require('../assets/voice/childe_p.wav')),
+    banned: new Audio(require('../assets/voice/childe_b.wav')),
+    flash: require('../assets/images/flash/Childe.webp')
   },
   {
     name: 'Thoma',
     vision: 'Pyro',
-    image: 'thoma.png',
-    thumbnail: 'thoma_thumb.jpg',
-    picked: 'thoma_p.wav',
-    banned: 'thoma_b.wav',
-    flash: 'Thoma.webp'
+    image: require('../assets/images/characters/thoma.webp'),
+    thumbnail: require('../assets/images/thumbnail/thoma_thumb.webp'),
+    picked: new Audio(require('../assets/voice/thoma_p.wav')),
+    banned: new Audio(require('../assets/voice/thoma_b.wav')),
+    flash: require('../assets/images/flash/Thoma.webp')
   },
   // {
   //   name: 'Traveler',
   //   vision: 'Unknown',
-  //   image: 'traveler.png'
+  //   image: require('../assets/images/characters/traveler.webp')
   // },
   {
     name: 'Venti',
     vision: 'Anemo',
-    image: 'venti.png',
-    thumbnail: 'venti_thumb.jpg',
-    picked: 'venti_p.wav',
-    banned: 'venti_b.wav',
-    flash: 'Venti.webp'
+    image: require('../assets/images/characters/venti.webp'),
+    thumbnail: require('../assets/images/thumbnail/venti_thumb.webp'),
+    picked: new Audio(require('../assets/voice/venti_p.wav')),
+    banned: new Audio(require('../assets/voice/venti_b.wav')),
+    flash: require('../assets/images/flash/Venti.webp')
   },
   {
     name: 'Xiangling',
     vision: 'Pyro',
-    image: 'xiangling.png',
-    thumbnail: 'xiangling_thumb.jpg',
-    picked: 'xiangling_p.wav',
-    banned: 'xiangling_b.wav',
-    flash: 'Xiangling.webp'
+    image: require('../assets/images/characters/xiangling.webp'),
+    thumbnail: require('../assets/images/thumbnail/xiangling_thumb.webp'),
+    picked: new Audio(require('../assets/voice/xiangling_p.wav')),
+    banned: new Audio(require('../assets/voice/xiangling_b.wav')),
+    flash: require('../assets/images/flash/Xiangling.webp')
   },
   {
     name: 'Xiao',
     vision: 'Anemo',
-    image: 'xiao.png',
-    thumbnail: 'xiao_thumb.jpg',
-    picked: 'xiao_p.wav',
-    banned: 'xiao_b.wav',
-    flash: 'Xiao.webp'
+    image: require('../assets/images/characters/xiao.webp'),
+    thumbnail: require('../assets/images/thumbnail/xiao_thumb.webp'),
+    picked: new Audio(require('../assets/voice/xiao_p.wav')),
+    banned: new Audio(require('../assets/voice/xiao_b.wav')),
+    flash: require('../assets/images/flash/Xiao.webp')
   },
   {
     name: 'Xingqiu',
     vision: 'Hydro',
-    image: 'xingqiu.png',
-    thumbnail: 'xingqiu_thumb.jpg',
-    picked: 'xingqiu_p.wav',
-    banned: 'xingqiu_b.wav',
-    flash: 'Xingqiu.webp'
+    image: require('../assets/images/characters/xingqiu.webp'),
+    thumbnail: require('../assets/images/thumbnail/xingqiu_thumb.webp'),
+    picked: new Audio(require('../assets/voice/xingqiu_p.wav')),
+    banned: new Audio(require('../assets/voice/xingqiu_b.wav')),
+    flash: require('../assets/images/flash/Xingqiu.webp')
   },
   {
     name: 'Xinyan',
     vision: 'Pyro',
-    image: 'xinyan.png',
-    thumbnail: 'xinyan_thumb.jpg',
-    picked: 'xinyan_p.wav',
-    banned: 'xinyan_b.wav',
-    flash: 'Xinyan.webp'
+    image: require('../assets/images/characters/xinyan.webp'),
+    thumbnail: require('../assets/images/thumbnail/xinyan_thumb.webp'),
+    picked: new Audio(require('../assets/voice/xinyan_p.wav')),
+    banned: new Audio(require('../assets/voice/xinyan_b.wav')),
+    flash: require('../assets/images/flash/Xinyan.webp')
   },
   {
     name: 'Yae Miko',
     vision: 'Electro',
-    image: 'yae-miko.png',
-    thumbnail: 'yae-miko_thumb.jpg',
-    picked: 'yae_p.wav',
-    banned: 'yae_b.wav',
-    flash: 'Yaemiko.webp'
+    image: require('../assets/images/characters/yae-miko.webp'),
+    thumbnail: require('../assets/images/thumbnail/yae-miko_thumb.webp'),
+    picked: new Audio(require('../assets/voice/yae_p.wav')),
+    banned: new Audio(require('../assets/voice/yae_b.wav')),
+    flash: require('../assets/images/flash/Yaemiko.webp')
   },
   {
     name: 'Yanfei',
     vision: 'Pyro',
-    image: 'yanfei.png',
-    thumbnail: 'yanfei_thumb.jpg',
-    picked: 'yanfei_p.wav',
-    banned: 'yanfei_b.wav',
-    flash: 'Yanfei.webp'
+    image: require('../assets/images/characters/yanfei.webp'),
+    thumbnail: require('../assets/images/thumbnail/yanfei_thumb.webp'),
+    picked: new Audio(require('../assets/voice/yanfei_p.wav')),
+    banned: new Audio(require('../assets/voice/yanfei_b.wav')),
+    flash: require('../assets/images/flash/Yanfei.webp')
   },
   {
     name: 'Yoimiya',
     vision: 'Pyro',
-    image: 'yoimiya.png',
-    thumbnail: 'yoimiya_thumb.jpg',
-    picked: 'yoimiya_p.wav',
-    banned: 'yoimiya_b.wav',
-    flash: 'Yoimiya.webp'
+    image: require('../assets/images/characters/yoimiya.webp'),
+    thumbnail: require('../assets/images/thumbnail/yoimiya_thumb.webp'),
+    picked: new Audio(require('../assets/voice/yoimiya_p.wav')),
+    banned: new Audio(require('../assets/voice/yoimiya_b.wav')),
+    flash: require('../assets/images/flash/Yoimiya.webp')
   },
   {
     name: 'Yunjin',
     vision: 'Geo',
-    image: 'yunjin.png',
-    thumbnail: 'yunjin_thumb.jpg',
-    picked: 'yunjin_p.wav',
-    banned: 'yunjin_b.wav',
-    flash: 'Yun jin.webp'
+    image: require('../assets/images/characters/yunjin.webp'),
+    thumbnail: require('../assets/images/thumbnail/yunjin_thumb.webp'),
+    picked: new Audio(require('../assets/voice/yunjin_p.wav')),
+    banned: new Audio(require('../assets/voice/yunjin_b.wav')),
+    flash: require('../assets/images/flash/Yun jin.webp')
   },
   {
     name: 'Zhongli',
     vision: 'Geo',
-    image: 'zhongli.png',
-    thumbnail: 'zhongli_thumb.jpg',
-    picked: 'zhongli_p.wav',
-    banned: 'zhongli_b.wav',
-    flash: 'Zhongli.webp'
+    image: require('../assets/images/characters/zhongli.webp'),
+    thumbnail: require('../assets/images/thumbnail/zhongli_thumb.webp'),
+    picked: new Audio(require('../assets/voice/zhongli_p.wav')),
+    banned: new Audio(require('../assets/voice/zhongli_b.wav')),
+    flash: require('../assets/images/flash/Zhongli.webp')
   }
 ]
 
