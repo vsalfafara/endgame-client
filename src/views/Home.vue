@@ -166,6 +166,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 10px;
   }
   h3 {
     width: 400px;

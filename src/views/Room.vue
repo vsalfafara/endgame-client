@@ -151,40 +151,76 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .container {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    .el-row {
+    @media screen and (min-width: 1281px) {
+       .container{
+         max-width: 65em;
+       }
+     }
+    @media screen and (min-width: 1025px) and (max-width: 1280px) {
+       .container{
+         max-width: 65em;
+       }
+     }
+     @media screen and (min-width: 768px) and (max-width: 1024px)  {
+       .container{
+          max-width: 55em;
+       }
+     }
+     @media screen and  (min-width: 480px) and (max-width: 768px)  {
+       .container{
+          max-width: 45em;
+       }
+     }
+     @media screen and (max-width: 480px) {
+       .container{
+          width: 100%;
+          .el-row{
+            flex-direction: column !important;
+            .el-col{
+              width: 100% !important;
+              margin-bottom: 15px;
+            }
+          }
+        }
+     }
+
+ .container {
       width: 100%;
+      height: 100%;
       display: flex;
-      justify-content: center;
-      .el-col {
-        margin: 0 10px;
-        max-width: 500px;
+      align-items: center;
+      margin: 0 auto;
+      .el-row {
         width: 100%;
-        span {
-          font-weight: bold;
-        }
-        img {
-          width: 50px;
-          display: block;
-          margin: 0 auto;
-        }
-        p {
-          text-align: center;
-        }
-        .btn-group {
-          display: flex;
-          justify-content: space-between;
-        }
-        .player {
-          display: inline-block;
-          width: 25%;
-          margin: 0;
-          cursor: pointer;
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        .el-col {
+          padding: 0 10px;
+          // max-width: 500px;
+          width: 50%;
+          span {
+            font-weight: bold;
+          }
+          img {
+            width: 50px;
+            display: block;
+            margin: 0 auto;
+          }
+          p {
+            text-align: center;
+          }
+          .btn-group {
+            display: flex;
+            justify-content: space-between;
+          }
+          .player {
+            display: inline-block;
+            width: 25%;
+            margin: 0;
+            cursor: pointer;
+          }
         }
       }
     }
-  }
 </style>

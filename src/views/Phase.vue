@@ -1,67 +1,144 @@
 <template>
-  <div v-if="characterSelection" class="container">
-    <div v-if="characterSelection[0].showSelectType" class="player one" :class="{'picking': characterSelection[0].selectType === 1, 'banning': characterSelection[0].selectType === 0}"></div>
-    <div v-if="characterSelection[1].showSelectType" class="player two" :class="{'picking': characterSelection[1].selectType === 1, 'banning': characterSelection[1].selectType === 0}"></div>
-    <img v-if="showFlash" class="flash" :class="{'picked': flashType === 1, 'banned': flashType === 0}" :src="flash" alt="" @click="hideFlash">
-    <h1 class="time">{{time}}</h1>
-    <div v-if="isHost" class="controls">
-      <el-button type="success" icon="el-icon-back" circle @click="back"></el-button>
-      <div>
-        <el-button type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
-        <el-button type="primary" icon="el-icon-refresh" circle @click="switchCaptains"></el-button>
+  <div class="relative" v-if="characterSelection">
+    <div class="container">
+      <div v-if="characterSelection[0].showSelectType" class="player one" :class="{'picking': characterSelection[0].selectType === 1, 'banning': characterSelection[0].selectType === 0}"></div>
+      <div v-if="characterSelection[1].showSelectType" class="player two" :class="{'picking': characterSelection[1].selectType === 1, 'banning': characterSelection[1].selectType === 0}"></div>
+      <img v-if="showFlash" class="flash" :class="{'picked': flashType === 1, 'banned': flashType === 0}" :src="flash" alt="" @click="hideFlash">
+      <h1 class="time">{{time}}</h1>
+      <div v-if="isHost" class="controls">
+        <el-button type="success" icon="el-icon-back" circle @click="back"></el-button>
+        <div>
+          <el-button type="danger" icon="el-icon-refresh" circle @click="reset"></el-button>
+          <el-button type="primary" icon="el-icon-refresh" circle @click="switchCaptains"></el-button>
+        </div>
+      </div>
+      <div class="ban-panels">
+        <el-row type="flex" justify="space-between">
+          <el-col :lg="8" :md="10" :sm="24" :xs="24">
+            <div class="row">
+              <div v-for="(ban, index) in characterSelection[0].selection.bans" :key="index" class="selection ban">
+                <img v-if="ban" :src="ban" class="select">
+              </div>
+              <div v-for="(ban, index) in characterSelection[0].bansRemaining" :key="index" class="selection ban">
+                <img class="select">
+              </div>
+            </div>
+          </el-col>
+          <el-col :lg="8" :md="4" :sm="24" :xs="24">
+            <el-row type="flex" justify="center" align="middle">
+              <el-col :lg="12" :md="24">
+                <div class="text-align-center">
+                  <p v-if="characterSelection[0].showSelectText && !isHost">{{characterSelection[0].selectText}}</p>
+                  <p v-if="showRerollText">{{characterSelection[0].rerollText}}</p>
+                </div>
+              </el-col>
+              <el-col :lg="12" :md="24" :xs="24">
+                <div class="text-align-center">
+                  <p v-if="characterSelection[1].showSelectText && !isHost">{{characterSelection[1].selectText}}</p>
+                  <p v-if="showRerollText">{{characterSelection[1].rerollText}}</p>
+                </div>
+              </el-col>
+            </el-row>
+          </el-col>
+          <el-col :lg="8" :md="10" :sm="24">
+            <div class="row-reverse">
+              <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
+                <img v-if="ban" :src="ban" class="select">
+              </div>
+              <div v-for="(ban, index) in characterSelection[1].bansRemaining" :key="index" class="selection ban">
+                <img class="select">
+              </div>
+            </div>
+          </el-col>
+        </el-row>
       </div>
     </div>
-    <div class="ban-panels">
-      <el-row type="flex" justify="space-between">
-        <el-col :span="8">
-          <div class="row">
-            <div v-for="(ban, index) in characterSelection[0].selection.bans" :key="index" class="selection ban">
-              <img v-if="ban" :src="ban" class="select">
+    <div class="container">
+      <el-row>
+        <el-col :span="6">
+          <div>
+            <h1 class="fixed-width">{{ characterSelection[0].name }}</h1>
+            <div v-for="(pick, index) in characterSelection[0].selection.picks" :key="index" class="selection pick">
+              <img v-if="pick" :src="pick" class="select">
             </div>
-            <div v-for="(ban, index) in characterSelection[0].bansRemaining" :key="index" class="selection ban">
+            <div v-for="(pick, index) in characterSelection[0].picksRemaining" :key="index" class="selection pick">
               <img class="select">
+            </div>
+            <div v-if="characterSelection[0].showButton" class="forSelection" :class="{'deselect': !characterSelection[0].isTurn, 'pick': selection}" @click="enter">
+              <div v-if="!characterSelection[0].isTurn" class="disabled"></div>
+              <img :src="characterSelected.image" alt="">
+              <div class="text">
+                <h5>{{selection ? 'Pick' : 'Ban'}}</h5>
+                <h3>{{characterSelected.name}}</h3>
+              </div>
             </div>
           </div>
         </el-col>
-        <el-col :span="8">
-          <el-row type="flex" justify="center" align="middle">
-            <el-col :span="12">
-              <div class="text-align-center">
-                <p v-if="characterSelection[0].showSelectText && !isHost">{{characterSelection[0].selectText}}</p>
-                <p v-if="showRerollText">{{characterSelection[0].rerollText}}</p>
+        <el-col :span="12">
+          <div class="boss">
+            <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
+            <img v-if="showBoss" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
+            <img v-if="showRoulette" src="@/assets/images/bosses/roulette.gif" class="boss-img large" alt="">
+          </div>
+          <div v-if="rerollButtons">
+            <h3>Reroll?</h3>
+            <el-row type="flex" justify="center">
+              <el-button type="success" @click="vote(1)">Yes</el-button>
+              <el-button type="danger" @click="vote(0)">No</el-button>
+            </el-row>
+          </div>
+          <div v-if="!isHost" class="panel-container" :class="{'show': showPanel}">
+            <el-scrollbar wrap-class="scrollbar-wrapper">
+              <div class="character-panels">
+                <div v-for="(row, index) in panels" :key="index" class="panel-col">
+                  <img v-for="(character, cIndex) in row.characters" :key="cIndex" :src="character.image" @click="select(character)" class="panel" :class="row.color">
+                </div>
               </div>
-            </el-col>
-            <el-col :span="12">
-              <div class="text-align-center">
-                <p v-if="characterSelection[1].showSelectText && !isHost">{{characterSelection[1].selectText}}</p>
-                <p v-if="showRerollText">{{characterSelection[1].rerollText}}</p>
-              </div>
-            </el-col>
-          </el-row>
-        </el-col>
-        <el-col :span="8">
-          <div class="row-reverse">
-            <div v-for="(ban, index) in characterSelection[1].selection.bans" :key="index" class="selection ban">
-              <img v-if="ban" :src="ban" class="select">
+            </el-scrollbar>
+          </div>
+          <div v-else class="panel-container character-to-show-appear" :class="{'show': showPanel}">
+            <div v-if="showSelectText" class="select-text" :class="{'picking': selection === 1, 'banning': selection === 0}">
+              <h1>{{ selectName }}</h1>
+              <h3>{{ selectText }}</h3>
             </div>
-            <div v-for="(ban, index) in characterSelection[1].bansRemaining" :key="index" class="selection ban">
+          </div>
+        </el-col>
+        <el-col :span="6">
+          <div v-if="players.length && characterSelection.length">
+            <h1 class="fixed-width margin-left">{{ characterSelection[1].name }}</h1>
+            <div v-for="(pick, index) in characterSelection[1].selection.picks" :key="index" class="selection pick margin-left">
+              <img v-if="pick" :src="pick" class="select">
+            </div>
+            <div v-for="(pick, index) in characterSelection[1].picksRemaining" :key="index" class="selection pick margin-left">
               <img class="select">
+            </div>
+            <div v-if="characterSelection[1].showButton" class="forSelection" :class="{'deselect': !characterSelection[1].isTurn, 'pick': selection}" @click="enter">
+              <div v-if="!characterSelection[1].isTurn" class="disabled"></div>
+              <img :src="characterSelected.image" alt="">
+              <div class="text">
+                <h5>{{selection ? 'Pick' : 'Ban'}}</h5>
+                <h3>{{characterSelected.name}}</h3>
+              </div>
             </div>
           </div>
         </el-col>
       </el-row>
     </div>
-    <el-row>
-      <el-col :span="6">
-        <div>
-          <h1 class="fixed-width">{{ characterSelection[0].name }}</h1>
-          <div v-for="(pick, index) in characterSelection[0].selection.picks" :key="index" class="selection pick">
-            <img v-if="pick" :src="pick" class="select">
+    <div class="expand-character-wrapper" :class="{'show': showPanel}" >
+      <buttton type="button" class="expander-button" @click="expandCharacters">
+          <img :src="paimonIMG" alt="paimon-button-expand-character"/>
+      </buttton>
+      <div class="character-list-wrapper">
+          <div v-if="!isHost" class="panel-container" :class="{'show': showPanel}">
+              <el-scrollbar wrap-class="scrollbar-wrapper">
+                <div class="character-panels">
+                  <div v-for="(row, index) in panels" :key="index" class="panel-col">
+                    <img v-for="(character, cIndex) in row.characters" :key="cIndex" :src="character.image" @click="select(character)" class="panel" :class="row.color">
+                  </div>
+                </div>
+              </el-scrollbar>
           </div>
-          <div v-for="(pick, index) in characterSelection[0].picksRemaining" :key="index" class="selection pick">
-            <img class="select">
-          </div>
-          <div v-if="characterSelection[0].showButton" class="forSelection" :class="{'deselect': !characterSelection[0].isTurn, 'pick': selection}" @click="enter">
+          <div v-if="characterSelection[0].showButton" class="forSelection-mini" :class="{'deselect': !characterSelection[0].isTurn, 'pick': selection}" @click="enter">
             <div v-if="!characterSelection[0].isTurn" class="disabled"></div>
             <img :src="characterSelected.image" alt="">
             <div class="text">
@@ -69,47 +146,8 @@
               <h3>{{characterSelected.name}}</h3>
             </div>
           </div>
-        </div>
-      </el-col>
-      <el-col :span="12">
-        <div class="boss">
-          <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
-          <img v-if="showBoss" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
-          <img v-if="showRoulette" src="@/assets/images/bosses/roulette.gif" class="boss-img large" alt="">
-        </div>
-        <div v-if="rerollButtons">
-          <h3>Reroll?</h3>
-          <el-row type="flex" justify="center">
-            <el-button type="success" @click="vote(1)">Yes</el-button>
-            <el-button type="danger" @click="vote(0)">No</el-button>
-          </el-row>
-        </div>
-        <div v-if="!isHost" class="panel-container" :class="{'show': showPanel}">
-          <el-scrollbar wrap-class="scrollbar-wrapper">
-            <div class="character-panels">
-              <div v-for="(row, index) in panels" :key="index" class="panel-col">
-                <img v-for="(character, cIndex) in row.characters" :key="cIndex" :src="character.image" @click="select(character)" class="panel" :class="row.color">
-              </div>
-            </div>
-          </el-scrollbar>
-        </div>
-        <div v-else class="panel-container" :class="{'show': showPanel}">
-          <div v-if="showSelectText" class="select-text" :class="{'picking': selection === 1, 'banning': selection === 0}">
-            <h1>{{ selectName }}</h1>
-            <h3>{{ selectText }}</h3>
-          </div>
-        </div>
-      </el-col>
-      <el-col :span="6">
-        <div v-if="players.length && characterSelection.length">
-          <h1 class="fixed-width margin-left">{{ characterSelection[1].name }}</h1>
-          <div v-for="(pick, index) in characterSelection[1].selection.picks" :key="index" class="selection pick margin-left">
-            <img v-if="pick" :src="pick" class="select">
-          </div>
-          <div v-for="(pick, index) in characterSelection[1].picksRemaining" :key="index" class="selection pick margin-left">
-            <img class="select">
-          </div>
-          <div v-if="characterSelection[1].showButton" class="forSelection" :class="{'deselect': !characterSelection[1].isTurn, 'pick': selection}" @click="enter">
+
+          <div v-if="characterSelection[1].showButton" class="forSelection-mini" :class="{'deselect': !characterSelection[1].isTurn, 'pick': selection}" @click="enter">
             <div v-if="!characterSelection[1].isTurn" class="disabled"></div>
             <img :src="characterSelected.image" alt="">
             <div class="text">
@@ -117,9 +155,8 @@
               <h3>{{characterSelected.name}}</h3>
             </div>
           </div>
-        </div>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -159,7 +196,8 @@ export default {
       selection: null,
       currentSelecting: null,
       characterSelected: null,
-      time: 0
+      time: 0,
+      paimonIMG: require('@/assets/images/paimon-logo.png')
     }
   },
   created () {
@@ -292,6 +330,9 @@ export default {
     },
     back () {
       this.$router.back()
+    },
+    expandCharacters () {
+      document.querySelector('.expand-character-wrapper').classList.toggle('active')
     }
   },
   sockets: {
@@ -318,6 +359,7 @@ export default {
       })
     },
     getUser (val) {
+      console.log(val)
       this.isHost = val.isHost
       this.userId = val.id
     },
@@ -506,17 +548,156 @@ export default {
           characters: this.characters.filter(character => character.vision === 'Geo')
         }
       )
+      document.querySelector('.expand-character-wrapper').classList.remove('active')
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+     @media screen and (min-width: 1281px) {
+       .container{
+         max-width: 90em;
+       }
+     }
+    @media screen and (min-width: 1025px) and (max-width: 1280px) {
+       .container{
+         max-width: 75em;
+       }
+     }
+     @media screen and (min-width: 769px) and (max-width: 1024px)  {
+        .container{
+          width: 100%;
+          .ban-panels{
+            .el-row{
+              .el-col:nth-child(2){
+                padding: 0;
+              }
+            }
+          }
+          .character-panels{
+            justify-content: flex-start !important;
+          }
+        }
+     }
+     @media screen and  (min-width: 481px) and (max-width: 768px)  {
+        .container{
+          width: 100%;
+          .ban-panels{
+            margin-top: 65px;
+            .el-row{
+               flex-direction: column;
+               .el-col:nth-child(2){
+                padding: 0;
+                margin: 10px 0;
+                width: 100%;
+              }
+            }
+          }
+          .el-row{
+            .panel-container {
+              .character-panels{
+                display: none;
+              }
+            }
+          }
+        }
+        .forSelection {
+          display: none !important;
+        }
+        .forSelection-mini{
+          height: 80px;
+          width: 100%;
+          border: 1px solid rgb(70, 70, 70);
+          overflow: hidden;
+          margin: auto;
+          display: flex !important;
+          justify-content: space-between;
+          align-items: center;
+          position: relative;
+          cursor: pointer;
+          background-image: linear-gradient(to top, #c73535, #a5282a, #831c1f, #641014, #460505);
+          &.deselect {
+            pointer-events: none;
+          }
+          &.pick {
+            background-image: linear-gradient(to top, #2a8f38, #1d752c, #115c20, #064414, #012d07);
+          }
+          img {
+            margin-left: 1rem;
+            height: 130%;
+            width: auto;
+          }
+          .text {
+            padding-right: 2rem;
+            h5, h3 {
+              margin: 0;
+              text-align: right;
+            }
+          }
+          .disabled {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+          }
+        }
+        .expand-character-wrapper{
+          position: fixed;
+          width: 100%;
+          height: 0;
+          transition: height 0.25s ease;
+          &.show{
+            display: block;
+          }
+          &.active{
+            height: 500px;
+            transition: height 0.25s ease;
+            .expander-button{
+              bottom: 87.5%;
+            }
+            .character-list-wrapper{
+              display: block !important;
+              position: fixed;
+              width: 100%;
+              left: 0;
+              bottom: 0;
+              background-color: #2E2E3A;
+              height: 400px;
+              .panel-container{
+                margin: 15px auto 0 auto;
+                max-width: unset;
+                padding: 0 10px;
+                .character-panels {
+                  max-height: 250px !important;
+                }
+              }
+            }
+          }
+        }
+     }
+     @media screen and (max-width: 480px) {
+        .container{
+          width: 100%;
+        }
+        .expand-character-wrapper{
+          display: block;
+          position: fixed;
+          left: 4%;
+          bottom: 8%;
+        }
+        .character-list-wrapper{
+          display: block;
+        }
+     }
+  .relative{
+    position: relative;
+  }
   .container {
     padding: 1rem;
     position: relative;
-    max-width: 1400px;
-    width: 100%;
     margin: auto;
   }
   .player {
@@ -772,4 +953,30 @@ export default {
       background-color: rgba(0, 0, 0, 0.6);
     }
   }
+  .forSelection-mini{
+    display: none;
+  }
+  .expand-character-wrapper{
+    display: none;
+    .expander-button{
+      width: 50px;
+      height: 50px;
+      border-radius: 100%;
+      background-color: #4caf50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      left: 25px;
+      bottom: 75px;
+      img{
+        width: 35px;
+        height: 35px;
+      }
+    }
+    .character-list-wrapper{
+      display:none;
+    }
+  }
+
 </style>
