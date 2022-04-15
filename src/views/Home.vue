@@ -161,12 +161,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+ @media screen and (max-width: 480px) {
+   .center {
+      padding: 0 22px;
+  }
+   h3 {
+    width: 100% !important;
+  }
+ }
   .center {
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 10px;
   }
   h3 {
     width: 400px;

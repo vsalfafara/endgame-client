@@ -178,6 +178,7 @@ export default {
             flex-direction: column !important;
             .el-col{
               width: 100% !important;
+              padding: 0 17px;
               margin-bottom: 15px;
             }
           }

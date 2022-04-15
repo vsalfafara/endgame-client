@@ -53,9 +53,9 @@
         </el-row>
       </div>
     </div>
-    <div class="container">
+    <div class="container picking-section">
       <el-row>
-        <el-col :span="6">
+        <el-col :lg="6" :md="6" :sm="6" :xs="7">
           <div>
             <h1 class="fixed-width">{{ characterSelection[0].name }}</h1>
             <div v-for="(pick, index) in characterSelection[0].selection.picks" :key="index" class="selection pick">
@@ -74,7 +74,7 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="12">
+        <el-col :lg="12" :md="12" :sm="12" :xs="10" class="announce-wrapper">
           <div class="boss">
             <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
             <img v-if="showBoss" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
@@ -103,7 +103,13 @@
             </div>
           </div>
         </el-col>
-        <el-col :span="6">
+        <el-col :lg="12" :md="12" :sm="12" :xs="10" class="announce-wrapper-mobile">
+          <div class="boss">
+            <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
+            <img v-if="showBoss & showPanel" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img"  alt="">
+          </div>
+       </el-col>
+        <el-col :lg="6" :md="6" :sm="6" :xs="7">
           <div v-if="players.length && characterSelection.length">
             <h1 class="fixed-width margin-left">{{ characterSelection[1].name }}</h1>
             <div v-for="(pick, index) in characterSelection[1].selection.picks" :key="index" class="selection pick margin-left">
@@ -124,7 +130,7 @@
         </el-col>
       </el-row>
     </div>
-    <div class="expand-character-wrapper" :class="{'show': showPanel}" >
+    <div class="expand-character-wrapper" v-if="!isHost" :class="{'show': showPanel}" >
       <buttton type="button" class="expander-button" @click="expandCharacters">
           <img :src="paimonIMG" alt="paimon-button-expand-character"/>
       </buttton>
@@ -146,7 +152,6 @@
               <h3>{{characterSelected.name}}</h3>
             </div>
           </div>
-
           <div v-if="characterSelection[1].showButton" class="forSelection-mini" :class="{'deselect': !characterSelection[1].isTurn, 'pick': selection}" @click="enter">
             <div v-if="!characterSelection[1].isTurn" class="disabled"></div>
             <img :src="characterSelected.image" alt="">
@@ -156,6 +161,35 @@
             </div>
           </div>
       </div>
+    </div>
+    <div class="mobile-modal" :class="[(showBoss && !showPanel ? 'show': ''), (showRoulette ? 'show': ''), (rerollButtons ? 'show': '')]">
+      <div class="boss">
+          <el-button v-if="isHost && !pressed" type="primary" @click="reveal">Boss Reveal</el-button>
+          <img v-if="showBoss" :src="require(`@/assets/images/bosses/${boss}.webp`)" class="boss-img" :class="{'large': !showPanel}" alt="">
+          <img v-if="showRoulette" src="@/assets/images/bosses/roulette.gif" class="boss-img large" alt="">
+        </div>
+        <div v-if="rerollButtons">
+          <h3>Reroll?</h3>
+          <el-row type="flex" justify="center">
+            <el-button type="success" @click="vote(1)">Yes</el-button>
+            <el-button type="danger" @click="vote(0)">No</el-button>
+          </el-row>
+        </div>
+        <div v-if="!isHost" class="panel-container" :class="{'show': showPanel}">
+          <el-scrollbar wrap-class="scrollbar-wrapper">
+            <div class="character-panels">
+              <div v-for="(row, index) in panels" :key="index" class="panel-col">
+                <img v-for="(character, cIndex) in row.characters" :key="cIndex" :src="character.image" @click="select(character)" class="panel" :class="row.color">
+              </div>
+            </div>
+          </el-scrollbar>
+        </div>
+        <div v-else class="panel-container character-to-show-appear" :class="{'show': showPanel}">
+          <div v-if="showSelectText" class="select-text" :class="{'picking': selection === 1, 'banning': selection === 0}">
+            <h1>{{ selectName }}</h1>
+            <h3>{{ selectText }}</h3>
+          </div>
+        </div>
     </div>
   </div>
 </template>
@@ -556,427 +590,670 @@ export default {
 
 <style lang="scss" scoped>
      @media screen and (min-width: 1281px) {
-       .container{
-         max-width: 90em;
-       }
-     }
+      .container {
+        max-width: 90em;
+      }
+    }
     @media screen and (min-width: 1025px) and (max-width: 1280px) {
-       .container{
-         max-width: 75em;
-       }
-     }
-     @media screen and (min-width: 769px) and (max-width: 1024px)  {
-        .container{
-          width: 100%;
-          .ban-panels{
-            .el-row{
-              .el-col:nth-child(2){
-                padding: 0;
-              }
-            }
-          }
-          .character-panels{
-            justify-content: flex-start !important;
-          }
-        }
-     }
-     @media screen and  (min-width: 481px) and (max-width: 768px)  {
-        .container{
-          width: 100%;
-          .ban-panels{
-            margin-top: 65px;
-            .el-row{
-               flex-direction: column;
-               .el-col:nth-child(2){
-                padding: 0;
-                margin: 10px 0;
-                width: 100%;
-              }
-            }
-          }
-          .el-row{
-            .panel-container {
-              .character-panels{
-                display: none;
-              }
+      .container {
+        max-width: 75em;
+      }
+    }
+    @media screen and (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        width: 100%;
+        .ban-panels {
+          .el-row {
+            .el-col:nth-child(2) {
+              padding: 0;
             }
           }
         }
-        .forSelection {
-          display: none !important;
+        .character-panels {
+          justify-content: flex-start !important;
         }
-        .forSelection-mini{
-          height: 80px;
-          width: 100%;
-          border: 1px solid rgb(70, 70, 70);
-          overflow: hidden;
-          margin: auto;
-          display: flex !important;
-          justify-content: space-between;
-          align-items: center;
-          position: relative;
-          cursor: pointer;
-          background-image: linear-gradient(to top, #c73535, #a5282a, #831c1f, #641014, #460505);
-          &.deselect {
-            pointer-events: none;
-          }
-          &.pick {
-            background-image: linear-gradient(to top, #2a8f38, #1d752c, #115c20, #064414, #012d07);
-          }
-          img {
-            margin-left: 1rem;
-            height: 130%;
-            width: auto;
-          }
-          .text {
-            padding-right: 2rem;
-            h5, h3 {
-              margin: 0;
-              text-align: right;
-            }
-          }
-          .disabled {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-          }
-        }
-        .expand-character-wrapper{
-          position: fixed;
-          width: 100%;
-          height: 0;
-          transition: height 0.25s ease;
-          &.show{
-            display: block;
-          }
-          &.active{
-            height: 500px;
-            transition: height 0.25s ease;
-            .expander-button{
-              bottom: 87.5%;
-            }
-            .character-list-wrapper{
-              display: block !important;
-              position: fixed;
+      }
+    }
+    @media screen and (min-width: 481px) and (max-width: 768px) {
+      .container {
+        width: 100%;
+        .ban-panels {
+          margin-top: 65px;
+          .el-row {
+            flex-direction: column;
+            .el-col:nth-child(2) {
+              padding: 0;
+              margin: 10px 0;
               width: 100%;
-              left: 0;
-              bottom: 0;
-              background-color: #2E2E3A;
-              height: 400px;
-              .panel-container{
-                margin: 15px auto 0 auto;
-                max-width: unset;
-                padding: 0 10px;
-                .character-panels {
-                  max-height: 250px !important;
+            }
+          }
+        }
+        .el-row {
+          .panel-container {
+            .character-panels {
+              display: none;
+            }
+          }
+        }
+      }
+      .forSelection {
+        display: none !important;
+      }
+      .forSelection-mini {
+        height: 80px;
+        width: 100%;
+        border: 1px solid rgb(70, 70, 70);
+        overflow: hidden;
+        margin: auto;
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        cursor: pointer;
+        background-image: linear-gradient(
+          to top,
+          #c73535,
+          #a5282a,
+          #831c1f,
+          #641014,
+          #460505
+        );
+        &.deselect {
+          pointer-events: none;
+        }
+        &.pick {
+          background-image: linear-gradient(
+            to top,
+            #2a8f38,
+            #1d752c,
+            #115c20,
+            #064414,
+            #012d07
+          );
+        }
+        img {
+          margin-left: 1rem;
+          height: 130%;
+          width: auto;
+        }
+        .text {
+          padding-right: 2rem;
+          h5,
+          h3 {
+            margin: 0;
+            text-align: right;
+          }
+        }
+        .disabled {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          background-color: rgba(0, 0, 0, 0.6);
+        }
+      }
+      .expand-character-wrapper {
+        position: fixed;
+        width: 100%;
+        height: 0;
+        transition: height 0.25s ease;
+        &.show {
+          display: block;
+        }
+        &.active {
+          height: 500px;
+          transition: height 0.25s ease;
+          .expander-button {
+            bottom: 87.5%;
+          }
+          .character-list-wrapper {
+            display: block !important;
+            position: fixed;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            background-color: #2e2e3a;
+            height: 400px;
+            .panel-container {
+              margin: 15px auto 0 auto;
+              max-width: unset;
+              padding: 0 10px;
+              .character-panels {
+                max-height: 250px !important;
+              }
+            }
+          }
+        }
+      }
+
+    }
+    @media screen and (max-width: 480px) {
+      h1.time {
+        width: 175px !important;
+      }
+      .container {
+        width: 100%;
+        .ban-panels {
+          margin-top: 65px;
+          .el-row {
+            flex-direction: column;
+            .el-col{
+              .row{
+                .selection{
+                  &.ban{
+                    height: 65px;
+                  }
                 }
               }
             }
+            .el-col:nth-child(2) {
+              padding: 0;
+              margin: 10px 0;
+              width: 100%;
+            }
           }
         }
-     }
-     @media screen and (max-width: 480px) {
-        .container{
+        .el-row {
+          .panel-container {
+            .character-panels {
+              display: none;
+            }
+          }
+        }
+      }
+      .picking-section{
+        .el-row{
+          display: flex;
+          justify-content: space-between;
           width: 100%;
+          .el-col{
+            padding: 0 !important;
+            .selection{
+              &.pick{
+                width: 115px;
+                height: 65px;
+                max-width: unset;
+              }
+            }
+          }
         }
-        .expand-character-wrapper{
+      }
+      .forSelection {
+        display: none !important;
+      }
+      .forSelection-mini {
+        height: 80px;
+        width: 100%;
+        border: 1px solid rgb(70, 70, 70);
+        overflow: hidden;
+        margin: auto;
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        cursor: pointer;
+        background-image: linear-gradient(
+          to top,
+          #c73535,
+          #a5282a,
+          #831c1f,
+          #641014,
+          #460505
+        );
+        &.deselect {
+          pointer-events: none;
+        }
+        &.pick {
+          background-image: linear-gradient(
+            to top,
+            #2a8f38,
+            #1d752c,
+            #115c20,
+            #064414,
+            #012d07
+          );
+        }
+        img {
+          margin-left: 1rem;
+          height: 130%;
+          width: auto;
+        }
+        .text {
+          padding-right: 2rem;
+          h5,
+          h3 {
+            margin: 0;
+            text-align: right;
+          }
+        }
+        .disabled {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          background-color: rgba(0, 0, 0, 0.6);
+        }
+      }
+      .expand-character-wrapper {
+        position: fixed;
+        width: 100%;
+        height: 0;
+        transition: height 0.25s ease;
+        .expander-button {
+          bottom: 5% !important;
+        }
+        &.show {
           display: block;
-          position: fixed;
-          left: 4%;
-          bottom: 8%;
         }
-        .character-list-wrapper{
-          display: block;
+        &.active {
+          height: 500px;
+          transition: height 0.25s ease;
+          .expander-button {
+            bottom:75% !important;
+          }
+          .character-list-wrapper {
+            display: block !important;
+            position: fixed;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            background-color: #2e2e3a;
+            height: 400px;
+            .panel-container {
+              margin: 15px auto 0 auto;
+              max-width: unset;
+              padding: 0 10px;
+              .character-panels {
+                max-height: 250px !important;
+              }
+            }
+          }
         }
-     }
-  .relative{
-    position: relative;
-  }
-  .container {
-    padding: 1rem;
-    position: relative;
-    margin: auto;
-  }
-  .player {
-    position: fixed;
-    top: 0;
-    height: 100%;
-    width: 400px;
-    &.one {
-      left: 0;
-      &.banning {
-        background-image: radial-gradient(20em 100% at left, rgba(173, 0, 0, 0.932), transparent);
       }
-      &.picking {
-        background-image: radial-gradient(20em 100% at left, rgba(0, 173, 37, 0.932), transparent);
+      .announce-wrapper{
+        display: none !important;
+       }
+      .announce-wrapper-mobile{
+        display: block !important;
+        .boss{
+          .boss-img{
+            max-height: 90px;
+          }
+        }
+       }
+      .mobile-modal{
+        &.show{
+           display: flex !important;
+           align-items: center;
+           justify-content: center;
+           flex-direction: column;
+           .boss{
+             .boss-img{
+               &.large{
+                 max-width: 250px !important;
+               }
+             }
+           }
+           .panel-container{
+             display: none !important;
+           }
+        }
       }
-    }
-    &.two {
-      right: 0;
-      &.banning {
-        background-image: radial-gradient(20em 100% at right, rgba(173, 0, 0, 0.932), transparent);
-      }
-      &.picking {
-        background-image: radial-gradient(20em 100% at right, rgba(0, 173, 37, 0.932), transparent);
-      }
-    }
-  }
-  .controls {
-    position: absolute;
-    top: .5rem;
-    width: 100%;
-    z-index: 2;
-    padding-right: 2rem;
-    display: flex;
-    justify-content: space-between;
-    .el-button {
-      margin: 0 .5rem;
-    }
-  }
-  h1 {
-    text-align: center;
-    margin: 0 0 1rem;
-    &.time {
-      clip-path: polygon(30% 100%, 70% 100%, 100% 0, 0 0);
-      background-color: #b90000;
-      width: 300px;
-      font-size: 3rem;
-      margin: 0;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      margin: 0 auto;
-    }
-    &.fixed-width {
-      max-width: 192px;
-    }
-    &.margin-left {
-      margin-left: auto;
-    }
-  }
-  .text-align-center {
-    text-align: center;
-  }
-  .panel {
-    height: 100px;
-    width: auto;
-    cursor: pointer;
-    margin: .3rem 0;
-    border-width: 2px;
-    border-style: solid;
-    &.Pyro {
-      border-color: #881d21
-    }
-    &.Hydro {
-      border-color: #2850a5
-    }
-    &.Cryo {
-      border-color: #2892a5
-    }
-    &.Electro {
-      border-color: #6928a5
-    }
-    &.Anemo {
-      border-color: #28a57b
-    }
-    &.Geo {
-      border-color: #a5a328
-    }
-  }
-  .ban-panels {
-    margin: 3rem 0 2rem;
-  }
-  .row {
-    display: flex;
-    justify-content: flex-start;
-  }
-  .row-reverse {
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: row-reverse;
-  }
-  .panel-container {
-    max-width: 700px;
-    width: 100%;
-    margin: 2rem auto;
-    transition: .2s;
-    opacity: 0;
-    visibility: hidden;
-    &.show {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-  .character-panels {
-    max-height: calc(100vh - 400px);
-    display: flex;
-    justify-content: center;
-  }
-  .panel-col {
-    display: flex;
-    flex-direction: column;
-    margin: 0 .3rem;
-  }
-  .el-col {
-    padding: 0 1rem;
-  }
-  .el-card {
-    height: 100%;
-  }
-  .boss {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    .boss-img {
-      max-height: 150px;
-      height: 100%;
-      width: auto;
-      transition: .2s;
-      &.large {
-        max-height: 350px;
+      .el-scrollbar .scrollbar-wrapper{
+        overflow-x: auto !important;
       }
     }
-  }
-  h3 {
-    text-align: center;
-  }
-  .select-text {
-    text-align: center;
-    max-width: 300px;
-    margin: auto;
-    padding: 1rem 0;
-    position: relative;
-    &.picking {
-      background-image: linear-gradient(to right, transparent, rgba(0, 173, 37, 0.932), transparent);
+    .relative {
+      position: relative;
     }
-    &.banning {
-      background-image: linear-gradient(to right, transparent, rgba(173, 0, 0, 0.932), transparent);
-    }
-  }
-  .flash {
-    position: fixed;
-    z-index: 2;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    height: 80vh;
-    width: auto;
-    &.picked {
-      background-image: radial-gradient(10em 50% at center, rgba(0, 173, 37, 0.932), transparent);
-    }
-    &.banned {
-      background-image: radial-gradient(10em 50% at center, rgba(173, 0, 0, 0.932), transparent);
-    }
-  }
-  .selection {
-    background-color: rgb(31, 31, 31);
-    border: 1px solid rgb(116, 116, 116);
-    border-radius: 7px;
-    margin-bottom: .4rem;
-    overflow: hidden;
-    .select {
-      height: 100%;
-      // width: 100%;
-      display: block;
+    .container {
+      padding: 1rem;
+      position: relative;
       margin: auto;
-      object-fit: cover;
-      object-position: center;
     }
-    &.ban {
-      width: 130px;
-      height: 80px;
-      &:nth-child(2) {
-        margin-right: .5rem;
-        margin-left: .5rem;
+    .player {
+      position: fixed;
+      top: 0;
+      height: 100%;
+      width: 400px;
+      &.one {
+        left: 0;
+        &.banning {
+          background-image: radial-gradient(
+            20em 100% at left,
+            rgba(173, 0, 0, 0.932),
+            transparent
+          );
+        }
+        &.picking {
+          background-image: radial-gradient(
+            20em 100% at left,
+            rgba(0, 173, 37, 0.932),
+            transparent
+          );
+        }
+      }
+      &.two {
+        right: 0;
+        &.banning {
+          background-image: radial-gradient(
+            20em 100% at right,
+            rgba(173, 0, 0, 0.932),
+            transparent
+          );
+        }
+        &.picking {
+          background-image: radial-gradient(
+            20em 100% at right,
+            rgba(0, 173, 37, 0.932),
+            transparent
+          );
+        }
       }
     }
-    &.pick {
-      height: 108px;
-      max-width: 192px;
+    .controls {
+      position: absolute;
+      top: 0.5rem;
+      width: 100%;
+      z-index: 2;
+      padding-right: 2rem;
+      display: flex;
+      justify-content: space-between;
+      .el-button {
+        margin: 0 0.5rem;
+      }
+    }
+    h1 {
+      text-align: center;
+      margin: 0 0 1rem;
+      &.time {
+        clip-path: polygon(30% 100%, 70% 100%, 100% 0, 0 0);
+        background-color: #b90000;
+        width: 300px;
+        font-size: 3rem;
+        margin: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+      }
+      &.fixed-width {
+        max-width: 192px;
+      }
       &.margin-left {
         margin-left: auto;
       }
     }
-  }
-  .right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-  }
-  .left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .forSelection {
-    height: 80px;
-    width: 100%;
-    border: 1px solid rgb(70, 70, 70);
-    overflow: hidden;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
-    background-image: linear-gradient(to top, #c73535, #a5282a, #831c1f, #641014, #460505);
-    &.deselect {
-      pointer-events: none;
+    .text-align-center {
+      text-align: center;
     }
-    &.pick {
-      background-image: linear-gradient(to top, #2a8f38, #1d752c, #115c20, #064414, #012d07);
-    }
-    img {
-      margin-left: 1rem;
-      height: 130%;
+    .panel {
+      height: 100px;
       width: auto;
-    }
-    .text {
-      padding-right: 2rem;
-      h5, h3 {
-        margin: 0;
-        text-align: right;
+      cursor: pointer;
+      margin: 0.3rem 0;
+      border-width: 2px;
+      border-style: solid;
+      &.Pyro {
+        border-color: #881d21;
+      }
+      &.Hydro {
+        border-color: #2850a5;
+      }
+      &.Cryo {
+        border-color: #2892a5;
+      }
+      &.Electro {
+        border-color: #6928a5;
+      }
+      &.Anemo {
+        border-color: #28a57b;
+      }
+      &.Geo {
+        border-color: #a5a328;
       }
     }
-    .disabled {
-      position: absolute;
+    .ban-panels {
+      margin: 3rem 0 2rem;
+    }
+    .row {
+      display: flex;
+      justify-content: flex-start;
+    }
+    .row-reverse {
+      display: flex;
+      justify-content: flex-start;
+      flex-direction: row-reverse;
+    }
+    .panel-container {
+      max-width: 700px;
+      width: 100%;
+      margin: 2rem auto;
+      transition: 0.2s;
+      opacity: 0;
+      visibility: hidden;
+      &.show {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+    .character-panels {
+      max-height: calc(100vh - 400px);
+      display: flex;
+      justify-content: center;
+    }
+    .panel-col {
+      display: flex;
+      flex-direction: column;
+      margin: 0 0.3rem;
+    }
+    .el-col {
+      padding: 0 1rem;
+    }
+    .el-card {
+      height: 100%;
+    }
+    .boss {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .boss-img {
+        max-height: 150px;
+        height: 100%;
+        width: auto;
+        transition: 0.2s;
+        &.large {
+          max-height: 350px;
+        }
+      }
+    }
+    h3 {
+      text-align: center;
+    }
+    .select-text {
+      text-align: center;
+      max-width: 300px;
+      margin: auto;
+      padding: 1rem 0;
+      position: relative;
+      &.picking {
+        background-image: linear-gradient(
+          to right,
+          transparent,
+          rgba(0, 173, 37, 0.932),
+          transparent
+        );
+      }
+      &.banning {
+        background-image: linear-gradient(
+          to right,
+          transparent,
+          rgba(173, 0, 0, 0.932),
+          transparent
+        );
+      }
+    }
+    .flash {
+      position: fixed;
+      z-index: 2;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      height: 80vh;
+      width: auto;
+      &.picked {
+        background-image: radial-gradient(
+          10em 50% at center,
+          rgba(0, 173, 37, 0.932),
+          transparent
+        );
+      }
+      &.banned {
+        background-image: radial-gradient(
+          10em 50% at center,
+          rgba(173, 0, 0, 0.932),
+          transparent
+        );
+      }
+    }
+    .selection {
+      background-color: rgb(31, 31, 31);
+      border: 1px solid rgb(116, 116, 116);
+      border-radius: 7px;
+      margin-bottom: 0.4rem;
+      overflow: hidden;
+      .select {
+        height: 100%;
+        // width: 100%;
+        display: block;
+        margin: auto;
+        object-fit: cover;
+        object-position: center;
+      }
+      &.ban {
+        width: 130px;
+        height: 80px;
+        &:nth-child(2) {
+          margin-right: 0.5rem;
+          margin-left: 0.5rem;
+        }
+      }
+      &.pick {
+        height: 108px;
+        max-width: 192px;
+        &.margin-left {
+          margin-left: auto;
+        }
+      }
+    }
+    .right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .forSelection {
+      height: 80px;
+      width: 100%;
+      border: 1px solid rgb(70, 70, 70);
+      overflow: hidden;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      cursor: pointer;
+      background-image: linear-gradient(
+        to top,
+        #c73535,
+        #a5282a,
+        #831c1f,
+        #641014,
+        #460505
+      );
+      &.deselect {
+        pointer-events: none;
+      }
+      &.pick {
+        background-image: linear-gradient(
+          to top,
+          #2a8f38,
+          #1d752c,
+          #115c20,
+          #064414,
+          #012d07
+        );
+      }
+      img {
+        margin-left: 1rem;
+        height: 130%;
+        width: auto;
+      }
+      .text {
+        padding-right: 2rem;
+        h5,
+        h3 {
+          margin: 0;
+          text-align: right;
+        }
+      }
+      .disabled {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+    }
+    .forSelection-mini {
+      display: none;
+    }
+    .expand-character-wrapper {
+      display: none;
+      .expander-button {
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        background-color: #4caf50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        left: 25px;
+        bottom: 75px;
+        img {
+          width: 35px;
+          height: 35px;
+        }
+      }
+      .character-list-wrapper {
+        display: none;
+      }
+    }
+    .announce-wrapper{
+     display: block;
+    }
+    .announce-wrapper-mobile{
+      display: none;
+    }
+    .mobile-modal{
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      z-index: 100;
       top: 0;
       left: 0;
-      height: 100%;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0.6);
+      display: none;
+      background-color: rgba(32,32,32,0.7);
     }
-  }
-  .forSelection-mini{
-    display: none;
-  }
-  .expand-character-wrapper{
-    display: none;
-    .expander-button{
-      width: 50px;
-      height: 50px;
-      border-radius: 100%;
-      background-color: #4caf50;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      left: 25px;
-      bottom: 75px;
-      img{
-        width: 35px;
-        height: 35px;
-      }
-    }
-    .character-list-wrapper{
-      display:none;
-    }
-  }
-
 </style>
