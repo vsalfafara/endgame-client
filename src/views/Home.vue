@@ -112,6 +112,13 @@ export default {
       }
     }
   },
+  created () {
+    if (!this.$route.params.id) {
+      localStorage.setItem('hostData', {})
+    } else {
+      localStorage.setItem('userData', {})
+    }
+  },
   methods: {
     createAvatar () {
       if (this.form.name && this.form.avatar) {
@@ -135,6 +142,8 @@ export default {
             name: this.form.name,
             avatar: this.avatar
           }
+
+          localStorage.setItem('userData', JSON.stringify({ ...form, room: this.$route.params.id }))
           this.$socket.client.emit('joinRoom', form, this.$route.params.id)
         } else {
           console.log('error submit!!')
@@ -146,6 +155,10 @@ export default {
   sockets: {
     connect () {
       console.log('socket connected')
+    },
+    createRoomId (val) {
+      localStorage.setItem('hostData', JSON.stringify(val))
+      this.$router.push(`/room/${val.room}`)
     },
     getRoomId (val) {
       this.$router.push(`/room/${val}`)

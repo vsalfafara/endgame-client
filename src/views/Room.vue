@@ -81,7 +81,21 @@ export default {
     }
   },
   created () {
-    this.$socket.client.emit('getUser')
+    if (localStorage.getItem('userData')) {
+      const userData = JSON.parse(localStorage.getItem('userData'))
+      this.$socket.client.emit('joinRoom', userData, userData.room)
+    } else {
+      this.$socket.client.emit('getUser')
+    }
+
+    if (localStorage.getItem('hostData')) {
+      const hostData = JSON.parse(localStorage.getItem('hostData'))
+      this.$socket.client.emit('joinRoom', hostData, hostData.room)
+    } else {
+      this.$socket.client.emit('getUser')
+    }
+
+    // this.$socket.client.emit('reconnecting', 'reconnecting')
     this.$socket.client.emit('getAllPlayersInRoom', this.$route.params.id)
   },
   methods: {
@@ -136,9 +150,12 @@ export default {
     getAllPlayersInRoom (val) {
       this.players = val
     },
+    reconnectingClient (data) {
+      console.log(data)
+    },
     getUser (val) {
-      this.isHost = val.isHost
       this.userId = val.id
+      this.isHost = val.isHost
       if (this.isHost) {
         this.$socket.client.emit('reset', { room: this.$route.params.id, type: 1 })
       }
